@@ -1,10 +1,5 @@
-import 'dart:async';
-import 'dart:io';
-import 'dart:math';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_acrylic/flutter_acrylic.dart';
-import 'package:flutter_acrylic/widgets/visual_effect_subview_container/visual_effect_subview_container.dart';
 import 'package:playtech_transmitter_app/main.dart';
 
 
@@ -13,7 +8,7 @@ import 'package:playtech_transmitter_app/main.dart';
 
 class WindowTitleBar extends StatelessWidget {
   final InterfaceBrightness brightness;
-  const WindowTitleBar({Key? key, required this.brightness}) : super(key: key);
+  const WindowTitleBar({super.key, required this.brightness});
 
   @override
   Widget build(BuildContext context) {
