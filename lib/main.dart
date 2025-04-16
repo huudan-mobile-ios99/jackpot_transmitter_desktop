@@ -1,10 +1,9 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:flutter_acrylic/widgets/visual_effect_subview_container/visual_effect_subview_container.dart';
-import 'package:playtech_transmitter_app/widget.dart';
+import 'package:playtech_transmitter_app/jackpot_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,24 +12,26 @@ Future<void> main() async {
   await Window.makeTitlebarTransparent();
   await Window.addEmptyMaskImage();
   await Window.disableShadow();
-  await Window.hideTitle();
+  // await Window.hideTitle();
   await Window.hideWindowControls();
-  runApp(MyApp());
+  runApp(const MyApp());
   doWhenWindowReady(() {
       appWindow
-        ..minSize = Size(320, 130)
-        ..size = Size(560, 360)
+        ..minSize = Size(420, 240)
+        ..size = Size(760, 360)
         ..alignment = Alignment.center
+        ..startDragging()
         ..show();
     });
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      debugShowMaterialGrid: false,
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.transparent
       ),
@@ -38,28 +39,9 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-enum InterfaceBrightness {
-  light,
-  dark,
-  auto,
-}
-extension InterfaceBrightnessExtension on InterfaceBrightness {
-  bool getIsDark(BuildContext? context) {
-    if (this == InterfaceBrightness.light) return false;
-    if (this == InterfaceBrightness.auto) {
-      if (context == null) return true;
-      return MediaQuery.of(context).platformBrightness == Brightness.dark;
-    }
-    return true;
-  }
-  Color getForegroundColor(BuildContext? context) {
-    return getIsDark(context) ? Colors.white : Colors.black;
-  }
-}
 
 class MyAppBody extends StatefulWidget {
-  MyAppBody({Key? key}) : super(key: key);
-
+  const MyAppBody({super.key});
   @override
   MyAppBodyState createState() => MyAppBodyState();
 }
@@ -69,7 +51,7 @@ class MyAppBodyState extends State<MyAppBody> {
   @override
   void initState() {
     super.initState();
-    this.setWindowEffect(WindowEffect.aero);
+    setWindowEffect(WindowEffect.aero);
   }
 
   void setWindowEffect(WindowEffect? value) {
@@ -78,39 +60,14 @@ class MyAppBodyState extends State<MyAppBody> {
       color: Colors.transparent,
       dark: false,
     );
-    this.setState(() => this.effect = value);
+    setState(() => effect = value);
   }
 
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Column(
-  mainAxisAlignment: MainAxisAlignment.center,
-  children: [
-    Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          decoration: BoxDecoration(
-            color: Colors.transparent,
-          ),
-          child: Text(
-            "14,000\$",
-            style: TextStyle(
-              fontSize: 72.0,
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ],
-    ),
-  ],
-),
-    );
+    return JackpotDisplay();
   }
 }
+
 
