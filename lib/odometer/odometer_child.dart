@@ -1,21 +1,7 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:playtech_transmitter_app/color_custom.dart';
 import 'package:playtech_transmitter_app/odometer/odometer_number.dart';
 import 'package:playtech_transmitter_app/odometer/slide_odometer.dart';
-
-class DynamicSpeedCurve extends Curve {
-  final double difference;
-
-  DynamicSpeedCurve(this.difference);
-
-  @override
-  double transformInternal(double t) {
-    final speedFactor = (difference / 20.0).clamp(0.5, 2.0);
-    final adjustedT = t * speedFactor;
-    return Curves.easeInOut.transform(adjustedT.clamp(0.0, 1.0));
-  }
-}
 
 class GameOdometerChild extends StatefulWidget {
   final double startValue;
@@ -39,18 +25,8 @@ class _GameOdometerChildState extends State<GameOdometerChild>
   final String fontFamily = 'Poppins';
 
   Duration _calculateDuration(double startValue, double endValue) {
-    // Normalize values
-    final start = startValue.isNaN || startValue.isInfinite ? 0.0 : startValue;
-    final end = endValue.isNaN || endValue.isInfinite ? 0.0 : endValue;
-
-    // Convert to cents for precise step counting
-    final startCents = (start * 100).round();
-    final endCents = (end * 100).round();
-    final totalSteps = (endCents - startCents).abs();
-
-    // 100ms per step, clamped between 2 and 10 seconds
-    final durationMs = (totalSteps * 100).clamp(5000, 10000).toInt();
-    return Duration(milliseconds: durationMs);
+    // Fixed 10-second duration for all animations
+    return const Duration(seconds: 15);
   }
 
   @override
@@ -75,14 +51,13 @@ class _GameOdometerChildState extends State<GameOdometerChild>
       vsync: this,
     );
 
-    final difference = (endValue - startValue).abs();
     odometerAnimation = OdometerTween(
       begin: OdometerNumber(startValue),
       end: OdometerNumber(endValue),
     ).animate(
       CurvedAnimation(
         parent: controller,
-        curve: DynamicSpeedCurve(difference),
+        curve: Curves.linear, // Linear curve for consistent speed
       ),
     );
   }

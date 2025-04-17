@@ -1,5 +1,4 @@
 import 'package:flutter/widgets.dart';
-import 'package:playtech_transmitter_app/odometer/odometer.dart';
 import 'package:playtech_transmitter_app/odometer/odometer_number.dart';
 
 class SlideOdometerTransition extends StatelessWidget {
