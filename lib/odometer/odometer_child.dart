@@ -35,11 +35,31 @@ class _GameOdometerChildState extends State<GameOdometerChild>
     with TickerProviderStateMixin {
   late AnimationController controller;
   late Animation<OdometerNumber> odometerAnimation;
-  final double fontSize = 75;
-  final String fontFamily = 'Poppins';
+  final double fontSize = 150;
+  final String fontFamily = 'Bungee';
 
   Duration _calculateDuration(double startValue, double endValue) {
-    return const Duration(seconds: 3);
+    // Normalize values
+    final start = startValue.isNaN || startValue.isInfinite ? 0.0 : startValue;
+    final end = endValue.isNaN || endValue.isInfinite ? 0.0 : endValue;
+
+    // Calculate difference, accounting for decimal decrease paths
+    final startDecimal = (start * 100).round() % 100;
+    final endDecimal = (end * 100).round() % 100;
+    double decimalDiff = (endDecimal - startDecimal).abs().toDouble();
+
+    // For decreasing decimals, simulate path through 0.99
+    if (endDecimal < startDecimal) {
+      decimalDiff = ((100 - startDecimal) + endDecimal).toDouble();
+    }
+
+    final integerDiff = (end.truncate() - start.truncate()).abs();
+    final totalDiff = integerDiff + (decimalDiff / 100);
+
+    // Scale duration based on difference
+    final durationMs = (totalDiff * 200).clamp(8500, 12500).toInt(); //RUN Seconds from min 5s to max 10s
+    print('total duration: ${durationMs}');
+    return Duration(milliseconds: durationMs);
   }
 
   @override
@@ -58,13 +78,6 @@ class _GameOdometerChildState extends State<GameOdometerChild>
         ? 0.0
         : double.parse(widget.endValue.toStringAsFixed(2));
 
-    // Debug input values and digits
-    debugPrint('startValue: $startValue, endValue: $endValue');
-    final startOdometer = OdometerNumber(startValue);
-    final endOdometer = OdometerNumber(endValue);
-    debugPrint('startDigits: ${startOdometer.digits} (decimal: ${startOdometer.digits[-2]}.${startOdometer.digits[-1]})');
-    debugPrint('endDigits: ${endOdometer.digits} (decimal: ${endOdometer.digits[-2]}.${endOdometer.digits[-1]})');
-
     final duration = _calculateDuration(startValue, endValue);
     controller = AnimationController(
       duration: duration,
@@ -80,11 +93,7 @@ class _GameOdometerChildState extends State<GameOdometerChild>
         parent: controller,
         curve: DynamicSpeedCurve(difference),
       ),
-    )..addListener(() {
-        // Debug digits during animation
-        final current = odometerAnimation.value;
-        print('Animation Digits (t=${controller.value.toStringAsFixed(2)}): ${current.digits} (decimal: ${current.digits[-2]}.${current.digits[-1]})');
-      });
+    );
   }
 
   @override
@@ -107,7 +116,7 @@ class _GameOdometerChildState extends State<GameOdometerChild>
   @override
   Widget build(BuildContext context) {
     final letterWidth = fontSize * 0.75;
-    final verticalOffset = -fontSize * 0.7;
+    final verticalOffset = fontSize/2;
 
     return Stack(
       alignment: Alignment.center,
@@ -117,16 +126,20 @@ class _GameOdometerChildState extends State<GameOdometerChild>
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              "\$",
-              style: TextStyle(
-                fontSize: fontSize,
-                color: ColorCustom.yellow_gradient3,
-                fontFamily: fontFamily,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(width: 8.0),
+            // Container(
+            //   alignment: Alignment.center,
+            //   height: fontSize,
+            //   child: Text(
+            //     "\$",
+            //     style: TextStyle(
+            //       fontSize: fontSize,
+            //       color: ColorCustom.yellow_gradient3,
+            //       fontFamily: fontFamily,
+            //       fontWeight: FontWeight.bold,
+            //     ),
+            //   ),
+            // ),
+            // const SizedBox(width: 8.0),
             SlideOdometerTransition(
               verticalOffset: verticalOffset,
               groupSeparator: Text(

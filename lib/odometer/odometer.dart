@@ -24,21 +24,11 @@ class Odometer extends StatelessWidget {
     final digits = odometerNumber.digits;
     final places = digits.keys.toList()..sort((a, b) => b.compareTo(a));
     // Filter out leading zeros for integer part
-    final filteredPlaces = <int>[];
-    bool hasNonZero = false;
-    for (var place in places) {
-      if (place <= 0) {
-        // Always include decimal point and decimal digits
-        filteredPlaces.add(place);
-      } else {
-        final value = digits[place] ?? 0.0;
-        if (value > 0 || hasNonZero || place == 1) {
-          // Include non-zero digits, digits after non-zero, or at least place 1
-          filteredPlaces.add(place);
-          if (value > 0) hasNonZero = true;
-        }
-      }
-    }
+    final filteredPlaces = places.where((place) {
+      if (place <= 0) return true; // Keep decimal point and decimal digits
+      // Keep integer digits if non-zero or necessary
+      return digits[place]! > 0 || place == 1 || digits[place + 1] != null;
+    }).toList();
 
     return Row(
       mainAxisSize: MainAxisSize.min,
