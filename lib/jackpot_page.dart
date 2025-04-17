@@ -2,8 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:playtech_transmitter_app/color_custom.dart';
-import 'package:playtech_transmitter_app/functions.dart';
-import 'package:playtech_transmitter_app/odometer_child.dart';
+import 'package:playtech_transmitter_app/odometer/odometer_child.dart';
 import 'package:web_socket_channel/io.dart';
 
 class JackpotDisplay extends StatefulWidget {
