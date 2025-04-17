@@ -32,11 +32,14 @@ class Odometer extends StatelessWidget {
 
     return Row(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
       children: filteredPlaces.map((place) {
         final value = digits[place] ?? 0.0;
         final digitValue = OdometerNumber.digit(value);
         final progress = OdometerNumber.progress(value);
         return Stack(
+          alignment: Alignment.center,
           children: [
             transitionOut(digitValue, place, progress),
             transitionIn((digitValue + 1) % 10, place, progress),

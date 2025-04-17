@@ -35,30 +35,21 @@ class _GameOdometerChildState extends State<GameOdometerChild>
     with TickerProviderStateMixin {
   late AnimationController controller;
   late Animation<OdometerNumber> odometerAnimation;
-  final double fontSize = 150;
-  final String fontFamily = 'Bungee';
+  final double fontSize = 75;
+  final String fontFamily = 'Poppins';
 
   Duration _calculateDuration(double startValue, double endValue) {
     // Normalize values
     final start = startValue.isNaN || startValue.isInfinite ? 0.0 : startValue;
     final end = endValue.isNaN || endValue.isInfinite ? 0.0 : endValue;
 
-    // Calculate difference, accounting for decimal decrease paths
-    final startDecimal = (start * 100).round() % 100;
-    final endDecimal = (end * 100).round() % 100;
-    double decimalDiff = (endDecimal - startDecimal).abs().toDouble();
+    // Convert to cents for precise step counting
+    final startCents = (start * 100).round();
+    final endCents = (end * 100).round();
+    final totalSteps = (endCents - startCents).abs();
 
-    // For decreasing decimals, simulate path through 0.99
-    if (endDecimal < startDecimal) {
-      decimalDiff = ((100 - startDecimal) + endDecimal).toDouble();
-    }
-
-    final integerDiff = (end.truncate() - start.truncate()).abs();
-    final totalDiff = integerDiff + (decimalDiff / 100);
-
-    // Scale duration based on difference
-    final durationMs = (totalDiff * 200).clamp(8500, 12500).toInt(); //RUN Seconds from min 5s to max 10s
-    print('total duration: ${durationMs}');
+    // 100ms per step, clamped between 2 and 10 seconds
+    final durationMs = (totalSteps * 100).clamp(5000, 10000).toInt();
     return Duration(milliseconds: durationMs);
   }
 
@@ -116,58 +107,50 @@ class _GameOdometerChildState extends State<GameOdometerChild>
   @override
   Widget build(BuildContext context) {
     final letterWidth = fontSize * 0.75;
-    final verticalOffset = fontSize/2;
+    final verticalOffset = fontSize * 0.75;
 
-    return Stack(
-      alignment: Alignment.center,
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
       children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Container(
-            //   alignment: Alignment.center,
-            //   height: fontSize,
-            //   child: Text(
-            //     "\$",
-            //     style: TextStyle(
-            //       fontSize: fontSize,
-            //       color: ColorCustom.yellow_gradient3,
-            //       fontFamily: fontFamily,
-            //       fontWeight: FontWeight.bold,
-            //     ),
-            //   ),
-            // ),
-            // const SizedBox(width: 8.0),
-            SlideOdometerTransition(
-              verticalOffset: verticalOffset,
-              groupSeparator: Text(
-                ',',
-                style: TextStyle(
-                  fontSize: fontSize,
-                  color: ColorCustom.yellow_gradient3,
-                  fontFamily: fontFamily,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              letterWidth: letterWidth,
-              odometerAnimation: odometerAnimation,
-              numberTextStyle: TextStyle(
-                fontSize: fontSize,
-                color: ColorCustom.yellow_gradient3,
-                fontFamily: fontFamily,
-                fontWeight: FontWeight.bold,
-                shadows: const [
-                  Shadow(
-                    color: Colors.white10,
-                    offset: Offset(16, 16),
-                    blurRadius: 16,
-                  ),
-                ],
-              ),
+        Text(
+          "\$",
+          style: TextStyle(
+            fontSize: fontSize,
+            color: ColorCustom.yellow_gradient3,
+            fontFamily: fontFamily,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(width: 8.0),
+        SlideOdometerTransition(
+          verticalOffset: verticalOffset,
+          groupSeparator: Text(
+            ',',
+            style: TextStyle(
+              fontSize: fontSize,
+              color: ColorCustom.yellow_gradient3,
+              fontFamily: fontFamily,
+              fontWeight: FontWeight.bold,
             ),
-          ],
+          ),
+          letterWidth: letterWidth,
+          odometerAnimation: odometerAnimation,
+          numberTextStyle: TextStyle(
+            fontSize: fontSize,
+            color: ColorCustom.yellow_gradient3,
+            fontFamily: fontFamily,
+            fontWeight: FontWeight.bold,
+            shadows: const [
+              Shadow(
+                color: Colors.white10,
+                offset: Offset(16, 16),
+                blurRadius: 16,
+              ),
+            ],
+          ),
         ),
       ],
     );

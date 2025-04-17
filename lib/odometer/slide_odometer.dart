@@ -19,7 +19,7 @@ class SlideOdometerTransition extends StatelessWidget {
   }) : super(key: key);
 
   Widget transitionOut(int value, int place, double animation) => Transform.translate(
-        offset: Offset(0, verticalOffset * (1.0 - animation)),
+        offset: Offset(0, verticalOffset * -animation),
         child: Opacity(
           opacity: 1.0 - animation,
           child: SizedBox(
@@ -34,7 +34,7 @@ class SlideOdometerTransition extends StatelessWidget {
       );
 
   Widget transitionIn(int value, int place, double animation) => Transform.translate(
-        offset: Offset(0, verticalOffset * (2.0 - animation)),
+        offset: Offset(0, verticalOffset * (1.0 - animation)),
         child: Opacity(
           opacity: animation,
           child: SizedBox(
@@ -79,17 +79,23 @@ class SlideOdometerTransition extends StatelessWidget {
           }
 
           children.add(
-            Stack(
-              children: [
-                transitionOut(digitValue, place, progress),
-                transitionIn((digitValue + 1) % 10, place, progress),
-              ],
+            SizedBox(
+              width: place == 0 ? letterWidth * 0.5 : letterWidth,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  transitionOut(digitValue, place, progress),
+                  transitionIn((digitValue + 1) % 10, place, progress),
+                ],
+              ),
             ),
           );
         }
 
         return Row(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
           children: children,
         );
       },

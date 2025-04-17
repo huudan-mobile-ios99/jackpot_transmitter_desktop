@@ -31,14 +31,14 @@ class OdometerNumber {
     final integerPart = int.parse(parts[0]);
     final decimalPart = int.parse(parts[1]); // E.g., "60" -> 60
 
-    // Correct decimal digit assignment
-    digits[-1] = (decimalPart ~/ 10).toDouble(); // Tenths (e.g., 0 for 0.60)
-    digits[-2] = (decimalPart % 10).toDouble(); // Hundredths (e.g., 6 for 0.60)
+    // Decimal digits: -1 for tenths, -2 for hundredths
+    digits[-1] = (decimalPart ~/ 10).toDouble(); // Tenths
+    digits[-2] = (decimalPart % 10).toDouble(); // Hundredths
     digits[0] = 0.0; // Decimal point
 
     var v = integerPart;
     var place = 1;
-    while (v > 0) {
+    while (v > 0 || place == 1) {
       digits[place] = (v % 10).toDouble();
       v = v ~/ 10;
       place++;
@@ -50,49 +50,16 @@ class OdometerNumber {
   static double progress(double value) => value - value.truncate();
 
   static OdometerNumber lerp(OdometerNumber start, OdometerNumber end, double t) {
-    // Determine max integer places needed
-    final startInt = start.number.truncate();
-    final endInt = end.number.truncate();
-    final maxPlaces = max(
-      startInt == 0 ? 1 : (log(startInt.abs()) / log(10)).ceil(),
-      endInt == 0 ? 1 : (log(endInt.abs()) / log(10)).ceil(),
-    );
+    // Convert to cents for step-by-step animation
+    final startCents = (start.number * 100).round();
+    final endCents = (end.number * 100).round();
+    final totalSteps = (endCents - startCents).abs();
+    final currentStep = (totalSteps * t.clamp(0.0, 1.0)).round();
+    final currentCents = startCents + (endCents > startCents ? currentStep : -currentStep);
 
-    final digits = <int, double>{};
-    // Handle integer digits
-    for (var i = 1; i <= maxPlaces; i++) {
-      final startValue = start.digits[i] ?? 0.0;
-      final endValue = end.digits[i] ?? 0.0;
-      // For decreasing values, simulate increment through 9
-      if (endValue < startValue) {
-        final diff = (10 - startValue) + endValue;
-        final interpolated = (startValue + (diff * t)) % 10;
-        digits[i] = interpolated;
-      } else {
-        digits[i] = lerpDouble(startValue, endValue, t.clamp(0.0, 1.0))!;
-      }
-    }
-
-    // Handle decimal digits
-    final startDecimal = ((start.digits[-1] ?? 0.0) * 10 + (start.digits[-2] ?? 0.0)).toInt();
-    final endDecimal = ((end.digits[-1] ?? 0.0) * 10 + (end.digits[-2] ?? 0.0)).toInt();
-
-    if (endDecimal < startDecimal) {
-      // Simulate path through 99 for decreasing decimals
-      final totalSteps = (100 - startDecimal) + endDecimal;
-      final currentStep = (totalSteps * t).toInt();
-      final currentDecimal = (startDecimal + currentStep) % 100;
-
-      digits[-1] = (currentDecimal ~/ 10).toDouble();
-      digits[-2] = (currentDecimal % 10).toDouble();
-    } else {
-      // Normal interpolation for increasing decimals
-      digits[-1] = lerpDouble(start.digits[-1] ?? 0.0, end.digits[-1] ?? 0.0, t.clamp(0.0, 1.0))!;
-      digits[-2] = lerpDouble(start.digits[-2] ?? 0.0, end.digits[-2] ?? 0.0, t.clamp(0.0, 1.0))!;
-    }
-
-    digits[0] = 0.0; // Decimal point
-    return OdometerNumber.fromDigits(digits);
+    // Convert current cents to digits
+    final currentValue = currentCents / 100.0;
+    return OdometerNumber(currentValue);
   }
 
   @override

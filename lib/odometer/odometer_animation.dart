@@ -61,7 +61,7 @@ class OdometerTransition extends AnimatedWidget {
   final OdometerAnimationTransitionBuilder transitionOut;
   final OdometerAnimationTransitionBuilder transitionIn;
 
-  Animation<OdometerNumber> get odometerAnimation =>listenable as Animation<OdometerNumber>;
+  Animation<OdometerNumber> get odometerAnimation => listenable as Animation<OdometerNumber>;
 
   @override
   Widget build(BuildContext context) {
