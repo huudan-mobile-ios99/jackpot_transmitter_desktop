@@ -17,8 +17,8 @@ Future<void> main() async {
   runApp(const MyApp());
   doWhenWindowReady(() {
       appWindow
-        ..minSize = Size(500, 250)
-        ..size = Size(850, 300)
+        ..minSize = Size(550, 350)
+        ..size = Size(850, 550)
         ..alignment = Alignment.center
         ..startDragging()
         ..show();
@@ -67,6 +67,7 @@ class MyAppBodyState extends State<MyAppBody> {
   @override
   Widget build(BuildContext context) {
     return JackpotDisplay();
+
   }
 }
 

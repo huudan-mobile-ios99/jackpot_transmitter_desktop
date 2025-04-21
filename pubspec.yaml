@@ -84,5 +84,22 @@ flutter:
     - family: Bungee
       fonts:
         - asset: asset/font/Bungee-Regular.ttf
+    - family: Rubik
+      fonts:
+        - asset: asset/font/Rubik-VariableFont_wght.ttf
+        - asset: asset/font/Rubik-Italic-VariableFont_wght.ttf
+    - family: Archivo
+      fonts:
+        - asset: asset/font/Archivo-Italic-VariableFont_wdth,wght.ttf
+        - asset: asset/font/Archivo-VariableFont_wdth,wght.ttf
+    - family: YoureGone
+      fonts:
+        - asset: asset/font/YoureGone.otf
+    - family: Arcane
+      fonts:
+        - asset: asset/font/arcane.ttf
+    - family: SFPro
+      fonts:
+        - asset: asset/font/SF-Pro-Display-Medium.otf
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
