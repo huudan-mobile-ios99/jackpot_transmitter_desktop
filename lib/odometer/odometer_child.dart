@@ -21,12 +21,12 @@ class _GameOdometerChildState extends State<GameOdometerChild>
     with TickerProviderStateMixin {
   late AnimationController controller;
   late Animation<OdometerNumber> odometerAnimation;
-  final double fontSize = 75;
-  final String fontFamily = 'Poppins';
+  final double fontSize = 125;
+  final String fontFamily = 'Bungee';
 
   Duration _calculateDuration(double startValue, double endValue) {
     // Fixed 10-second duration for all animations
-    return const Duration(seconds: 15);
+    return const Duration(seconds: 30);
   }
 
   @override
