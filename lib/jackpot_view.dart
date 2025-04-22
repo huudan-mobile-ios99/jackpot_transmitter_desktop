@@ -164,11 +164,10 @@ class _OdometerScreenState extends State<OdometerScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Odometer Slider')),
-      body: Center(
+    return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             // Odometer container with two odometers
             SizedBox(
@@ -268,7 +267,6 @@ class _OdometerScreenState extends State<OdometerScreen>
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 }
