@@ -112,13 +112,13 @@
 import 'dart:math';
 import 'package:flutter/widgets.dart';
 
-class OdometerNumber {
+class OdometerNumberCustom {
   final double number;
   final Map<int, double> digits;
 
-  OdometerNumber(this.number) : digits = generateDigits(number);
+  OdometerNumberCustom(this.number) : digits = generateDigits(number);
 
-  OdometerNumber.fromDigits(this.digits)
+  OdometerNumberCustom.fromDigits(this.digits)
       : number = digits.entries
             .map((e) => e.value * pow(10, e.key - 1))
             .fold(0.0, (a, b) => a + b);
@@ -163,31 +163,31 @@ class OdometerNumber {
   static int digit(double value) => (value % 10).truncate();
   static double progress(double value) => value - value.truncate();
 
-  static OdometerNumber lerp(OdometerNumber start, OdometerNumber end, double t) {
+  static OdometerNumberCustom lerp(OdometerNumberCustom start, OdometerNumberCustom end, double t) {
     final startCents = (start.number * 100).round();
     final endCents = (end.number * 100).round();
     final totalSteps = (endCents - startCents).abs();
     final currentStep = (totalSteps * t.clamp(0.0, 1.0)).round();
     final currentCents = startCents + (endCents > startCents ? currentStep : -currentStep);
     final currentValue = currentCents / 100.0;
-    return OdometerNumber(currentValue);
+    return OdometerNumberCustom(currentValue);
   }
 
   @override
   String toString() => 'OdometerNumber $number';
 }
 
-class OdometerTween extends Tween<OdometerNumber> {
-  OdometerTween({OdometerNumber? begin, OdometerNumber? end})
+class OdometerTween extends Tween<OdometerNumberCustom> {
+  OdometerTween({OdometerNumberCustom? begin, OdometerNumberCustom? end})
       : super(begin: begin, end: end);
 
   @override
-  OdometerNumber transform(double t) {
+  OdometerNumberCustom transform(double t) {
     if (t == 0.0) return begin!;
     if (t == 1.0) return end!;
     return lerp(t);
   }
 
   @override
-  OdometerNumber lerp(double t) => OdometerNumber.lerp(begin!, end!, t);
+  OdometerNumberCustom lerp(double t) => OdometerNumberCustom.lerp(begin!, end!, t);
 }

@@ -138,16 +138,16 @@
 
 
 import 'package:flutter/widgets.dart';
-import 'package:playtech_transmitter_app/odometer/odometer_number.dart';
+import 'package:playtech_transmitter_app/odometer/odometer_number_custom.dart';
 
-class SlideOdometerTransition extends StatelessWidget {
-  final Animation<OdometerNumber> odometerAnimation;
+class SlideOdometerTransitionCustom extends StatelessWidget {
+  final Animation<OdometerNumberCustom> odometerAnimation;
   final TextStyle numberTextStyle;
   final double letterWidth;
   final double verticalOffset;
   final Widget groupSeparator;
 
-  const SlideOdometerTransition({
+  const SlideOdometerTransitionCustom({
     Key? key,
     required this.odometerAnimation,
     required this.numberTextStyle,
@@ -194,8 +194,8 @@ class SlideOdometerTransition extends StatelessWidget {
 
         for (final place in filteredPlaces) {
           final value = digits[place] ?? 0.0;
-          final digitValue = OdometerNumber.digit(value); // Current digit (0-9)
-          final progress = OdometerNumber.progress(value); // Transition progress (0.0-1.0)
+          final digitValue = OdometerNumberCustom.digit(value); // Current digit (0-9)
+          final progress = OdometerNumberCustom.progress(value); // Transition progress (0.0-1.0)
 
           if (place > 0) {
             // Add group separator every three digits

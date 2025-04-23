@@ -1,14 +1,11 @@
 import 'package:flutter/widgets.dart';
-import 'package:playtech_transmitter_app/odometer/odometer.dart';
-import 'package:playtech_transmitter_app/odometer/odometer_number.dart';
-
+import 'package:odometer/src/odometer.dart';
+import 'package:odometer/src/odometer_number.dart';
 typedef OdometerAnimationTransitionBuilder = Widget Function(
   int value,
   int place,
   double animation,
 );
-
-
 class AnimatedOdometer extends ImplicitlyAnimatedWidget {
   const AnimatedOdometer({
     Key? key,
@@ -23,6 +20,7 @@ class AnimatedOdometer extends ImplicitlyAnimatedWidget {
   final OdometerNumber odometerNumber;
   final OdometerAnimationTransitionBuilder transitionOut;
   final OdometerAnimationTransitionBuilder transitionIn;
+
   @override
   _AnimatedOdometerState createState() => _AnimatedOdometerState();
 }
@@ -48,8 +46,6 @@ class _AnimatedOdometerState extends AnimatedWidgetBaseState<AnimatedOdometer> {
     );
   }
 }
-
-
 class OdometerTransition extends AnimatedWidget {
   const OdometerTransition({
     Key? key,
@@ -60,9 +56,7 @@ class OdometerTransition extends AnimatedWidget {
 
   final OdometerAnimationTransitionBuilder transitionOut;
   final OdometerAnimationTransitionBuilder transitionIn;
-
-  Animation<OdometerNumber> get odometerAnimation =>
-      listenable as Animation<OdometerNumber>;
+  Animation<OdometerNumber> get odometerAnimation => listenable as Animation<OdometerNumber>;
 
   @override
   Widget build(BuildContext context) {

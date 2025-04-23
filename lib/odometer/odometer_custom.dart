@@ -1,14 +1,14 @@
 import 'package:flutter/widgets.dart';
-import 'package:playtech_transmitter_app/odometer/odometer_animation.dart';
-import 'package:playtech_transmitter_app/odometer/odometer_number.dart';
+import 'package:playtech_transmitter_app/odometer/odometer_animation_custom.dart';
+import 'package:playtech_transmitter_app/odometer/odometer_number_custom.dart';
 
-class Odometer extends StatelessWidget {
+class OdometerCustom extends StatelessWidget {
   final OdometerAnimationTransitionBuilder transitionOut;
   final OdometerAnimationTransitionBuilder transitionIn;
-  final OdometerNumber odometerNumber;
+  final OdometerNumberCustom odometerNumber;
   final TextStyle? numberTextStyle;
 
-  const Odometer({
+  const OdometerCustom({
     Key? key,
     required this.transitionIn,
     required this.transitionOut,
@@ -50,14 +50,14 @@ class Odometer extends StatelessWidget {
             alignment: Alignment.center,
             children: [
               transitionOut(
-                OdometerNumber.digit(odometerNumber.digits[place]!),
+                OdometerNumberCustom.digit(odometerNumber.digits[place]!),
                 place,
-                OdometerNumber.progress(odometerNumber.digits[place]!),
+                OdometerNumberCustom.progress(odometerNumber.digits[place]!),
               ),
               transitionIn(
-                OdometerNumber.digit(odometerNumber.digits[place]! + 1),
+                OdometerNumberCustom.digit(odometerNumber.digits[place]! + 1),
                 place,
-                OdometerNumber.progress(odometerNumber.digits[place]!),
+                OdometerNumberCustom.progress(odometerNumber.digits[place]!),
               ),
             ],
           ),

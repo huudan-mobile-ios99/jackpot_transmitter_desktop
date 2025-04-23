@@ -156,8 +156,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:playtech_transmitter_app/color_custom.dart';
-import 'package:playtech_transmitter_app/odometer/odometer_number.dart';
-import 'package:playtech_transmitter_app/odometer/slide_odometer.dart';
+import 'package:playtech_transmitter_app/odometer/odometer_number_custom.dart';
+import 'package:playtech_transmitter_app/odometer/slide_odometer_custom.dart';
 
 class GameOdometerChild extends StatefulWidget {
   final double startValue;
@@ -175,14 +175,25 @@ class GameOdometerChild extends StatefulWidget {
 class _GameOdometerChildState extends State<GameOdometerChild>
     with TickerProviderStateMixin {
   late AnimationController controller;
-  late Animation<OdometerNumber> odometerAnimation;
+  late Animation<OdometerNumberCustom> odometerAnimation;
   final double fontSize = 125;
   final String fontFamily = 'YoureGone';
+  final  textStyle = TextStyle(
+            fontSize: 125,
+            color: Colors.white,
+            fontFamily: 'YoureGone',
+            fontWeight: FontWeight.bold,
+            shadows: const [
+              Shadow(
+                color: Colors.orangeAccent,
+                offset: Offset(0, 2.5),
+                blurRadius: 16,
+              ),
+            ],
+          );
 
   Duration _calculateDuration(double startValue, double endValue) {
-    // Fixed 10-second duration for all animations
-    return const Duration(seconds: 30);
-    // return const Duration(seconds: 30);
+    return const Duration(seconds: 30);    // Fixed 30-second duration for all animations
   }
 
   @override
@@ -207,8 +218,8 @@ class _GameOdometerChildState extends State<GameOdometerChild>
     );
 
     odometerAnimation = OdometerTween(
-      begin: OdometerNumber(startValue),
-      end: OdometerNumber(endValue),
+      begin: OdometerNumberCustom(startValue),
+      end: OdometerNumberCustom(endValue),
     ).animate(
       CurvedAnimation(
         parent: controller,
@@ -245,20 +256,12 @@ class _GameOdometerChildState extends State<GameOdometerChild>
       crossAxisAlignment: CrossAxisAlignment.baseline,
       textBaseline: TextBaseline.alphabetic,
       children: [
-        // Text(
-        //   "\$",
-        //   style: TextStyle(
-        //     fontSize: fontSize,
-        //     color: ColorCustom.yellow_gradient3,
-        //     fontFamily: fontFamily,
-        //     fontWeight: FontWeight.bold,
-        //   ),
-        // ),
-        // const SizedBox(width: 8.0),
-        SlideOdometerTransition(
+        Text("\$", style:textStyle),
+        const SizedBox(width: 8.0),
+        SlideOdometerTransitionCustom(
             verticalOffset: verticalOffset,
             groupSeparator: Text(
-              ',',
+              '',
               style: TextStyle(
                 fontSize: fontSize,
                 color: ColorCustom.yellow_gradient3,
@@ -268,19 +271,7 @@ class _GameOdometerChildState extends State<GameOdometerChild>
             ),
             letterWidth: letterWidth,
             odometerAnimation: odometerAnimation,
-            numberTextStyle: TextStyle(
-            fontSize: fontSize,
-            color: Colors.white, // Replace with ColorCustom.yellow_gradient3
-            fontFamily: fontFamily,
-            fontWeight: FontWeight.bold,
-            shadows: const [
-              Shadow(
-                color: Colors.orangeAccent,
-                offset: Offset(0, 2.5),
-                blurRadius: 16,
-              ),
-            ],
-          ),
+            numberTextStyle:textStyle
           ),
       ],
     );

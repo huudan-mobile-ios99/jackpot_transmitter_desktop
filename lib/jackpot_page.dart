@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:playtech_transmitter_app/color_custom.dart';
-import 'package:playtech_transmitter_app/functions.dart';
 import 'package:playtech_transmitter_app/jackpot_view.dart';
-import 'package:playtech_transmitter_app/odometer/odometer_child.dart';
+import 'package:playtech_transmitter_app/odometer/odometer_child_custom.dart';
+import 'package:playtech_transmitter_app/odometer_style2/odometer_child2.dart';
 import 'package:web_socket_channel/io.dart';
 
 class JackpotDisplay extends StatefulWidget {
@@ -22,7 +22,7 @@ class JackpotDisplayState extends State<JackpotDisplay> {
   final double fontSize = 92.0; // Adjusted for Flutter (HTML was 102)
   final Color fontColor = ColorCustom.yellow_bg;
   final String fontFamily = 'OpenSans';
-  final int animationSpeed = 5000; // Match HTML animation speed (2000ms)
+  final int animationSpeed = 2000; // Match HTML animation speed (2000ms)
 
   // State variables
   double jackpotValue = 0.0; // Current jackpot value
@@ -95,9 +95,9 @@ class JackpotDisplayState extends State<JackpotDisplay> {
       body: Center(
         child: isConnected
             ?
-            GameOdometerChild(startValue: previousJackpotValue, endValue: jackpotValue,)
-            // OdometerScreen()
-            // OdometerScreen(startValue: previousJackpotValue, endValue: jackpotValue)
+            GameOdometerChildStyle2(startValue1: previousJackpotValue, endValue1: jackpotValue)
+            // GameOdometerChild(startValue: previousJackpotValue, endValue: jackpotValue,)
+
             :  Text(
                 "Connecting to WebSocket...",
                 style: TextStyle(
