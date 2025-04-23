@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:odometer/odometer.dart';
-
+import 'package:playtech_transmitter_app/odometer_style2/odometer_number.dart';
+import 'package:playtech_transmitter_app/odometer_style2/slide_odometer.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 class GameOdometerChildStyle2 extends StatefulWidget {
   final double startValue1;
@@ -10,7 +12,6 @@ class GameOdometerChildStyle2 extends StatefulWidget {
     Key? key,
     required this.startValue1,
     required this.endValue1,
-
   }) : super(key: key);
 
   @override
@@ -23,9 +24,21 @@ class _GameOdometerChildStyle2State extends State<GameOdometerChildStyle2>
   late Animation<OdometerNumber> animation;
   final double fontSize = 125;
   final String fontFamily = 'YoureGone';
-  final  textStyle = const TextStyle(fontSize: 125,color: Colors.white,fontFamily: 'YoureGone',fontWeight: FontWeight.bold, shadows:  [Shadow(color: Colors.orangeAccent,offset: Offset(0, 2.5),blurRadius: 16,),],);
+  final textStyle = const TextStyle(
+    fontSize: 125,
+    color: Colors.white,
+    fontFamily: 'YoureGone',
+    fontWeight: FontWeight.bold,
+    shadows: [
+      Shadow(
+        color: Colors.orangeAccent,
+        offset: Offset(0, 2.5),
+        blurRadius: 16,
+      ),
+    ],
+  );
 
-  Duration _calculateDuration(double startValue, double endValue) {
+  Duration _calculateDuration() {
     return const Duration(seconds: 30);
   }
 
@@ -36,26 +49,29 @@ class _GameOdometerChildStyle2State extends State<GameOdometerChildStyle2>
     animationController.forward();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-
   void _initializeAnimation() {
-    final duration = _calculateDuration(widget.startValue1, widget.endValue1);
+    final duration = _calculateDuration();
     animationController = AnimationController(
       duration: duration,
       vsync: this,
     );
 
+    // Convert doubles to integer representation (e.g., 306.53 -> 30653)
+    final startInt = widget.startValue1.truncate();
+    final startDecimal = ((widget.startValue1 - startInt) * 100).round();
+    final endInt = widget.endValue1.truncate();
+    final endDecimal = ((widget.endValue1 - endInt) * 100).round();
+
+    final startNumber = startInt * 100 + startDecimal;
+    final endNumber = endInt * 100 + endDecimal;
+
     animation = OdometerTween(
-      begin: OdometerNumber(widget.startValue1),
-      end: OdometerNumber(widget.endValue1),
+      begin: OdometerNumber(startNumber),
+      end: OdometerNumber(endNumber),
     ).animate(
       CurvedAnimation(
         parent: animationController,
-        curve: Easing.standard,
+        curve: Curves.easeInOut,
       ),
     );
   }
@@ -63,14 +79,12 @@ class _GameOdometerChildStyle2State extends State<GameOdometerChildStyle2>
   @override
   void didUpdateWidget(covariant GameOdometerChildStyle2 oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Check if either the start or end values have changed
     if (widget.startValue1 != oldWidget.startValue1 ||
         widget.endValue1 != oldWidget.endValue1) {
-      animationController.dispose(); // Dispose of the old controller
-      _initializeAnimation(); // Reinitialize with new values
-      animationController.forward(from: 0.0); // Restart the animation
+      animationController.dispose();
+      _initializeAnimation();
+      animationController.forward(from: 0.0);
     }
-
   }
 
   @override
@@ -81,17 +95,14 @@ class _GameOdometerChildStyle2State extends State<GameOdometerChildStyle2>
 
   @override
   Widget build(BuildContext context) {
-    final letterWidth = fontSize * 0.85; // Adjusted for better spacing
-    final verticalOffset = fontSize * 1; // Positive for bottom-to-top
+    final letterWidth = fontSize * 0.85;
+    final verticalOffset = fontSize * 1;
 
     return ClipRect(
       child: Container(
         alignment: Alignment.center,
-        width: 500.0,
-        height:145.5,
-        decoration: BoxDecoration(
-          color:Colors.blue.shade200.withOpacity(.25)
-        ),
+        width: 1000.0,
+        height: 145.5,
         child: SingleChildScrollView(
           child: Stack(
             alignment: Alignment.center,
@@ -101,18 +112,19 @@ class _GameOdometerChildStyle2State extends State<GameOdometerChildStyle2>
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('\$',style: textStyle,),
-                  SizedBox(width:8,),
+                  Text('\$', style: textStyle),
+                  const SizedBox(width: 8),
                   SlideOdometerTransition(
-                                verticalOffset:verticalOffset,
-                                groupSeparator:  Text('.',style: textStyle),
-                                letterWidth: letterWidth,
-                                odometerAnimation: animation,
-                                numberTextStyle:  textStyle
+                    verticalOffset: verticalOffset,
+                    groupSeparator: Text(',', style: textStyle),
+                    decimalSeparator: Text('.', style: textStyle),
+                    letterWidth: letterWidth,
+                    odometerAnimation: animation,
+                    numberTextStyle: textStyle,
+                    decimalPlaces: 1,
                   ),
                 ],
               ),
-
             ],
           ),
         ),
@@ -120,8 +132,3 @@ class _GameOdometerChildStyle2State extends State<GameOdometerChildStyle2>
     );
   }
 }
-
-
-
-
-

@@ -1,31 +1,22 @@
 import 'package:flutter/widgets.dart';
-import 'package:odometer/src/odometer_animation.dart';
-import 'package:odometer/src/odometer_number.dart';
 
-/// The [ImplicitlyAnimatedWidget] uses the [AnimatedOdometer]
-/// with the sliding and fading digits transitions.
+import 'package:playtech_transmitter_app/odometer_style2/odometer_number.dart';
+import 'package:playtech_transmitter_app/odometer_style2/odometer_transition.dart';
+
+
+
+
+
 class AnimatedSlideOdometerNumber extends StatelessWidget {
   final OdometerNumber odometerNumber;
   final Duration duration;
-
-  /// The width of the SizedBox widget around each digit avoids the movement
-  /// of the digits when they change.
   final double letterWidth;
-
-  /// A widget that is used to separate digit groups.
-  ///
-  /// For example, if you pass the Text(',') as the separator,
-  /// the 10000 value result will be rendered as '10,000'.
   final Widget? groupSeparator;
-
-  /// The digit's [TextStyle].
+  final Widget? decimalSeparator;
   final TextStyle? numberTextStyle;
-
-  /// The vertical offset is used to translate digits.
   final double verticalOffset;
-
-  /// The curve animates the odometer number.
   final Curve curve;
+  final int decimalPlaces;
 
   const AnimatedSlideOdometerNumber({
     Key? key,
@@ -36,6 +27,8 @@ class AnimatedSlideOdometerNumber extends StatelessWidget {
     required this.letterWidth,
     this.verticalOffset = 20,
     this.groupSeparator,
+    this.decimalSeparator,
+    this.decimalPlaces = 0,
   }) : super(key: key);
 
   @override
@@ -49,8 +42,11 @@ class AnimatedSlideOdometerNumber extends StatelessWidget {
         animation,
         verticalOffset * animation - verticalOffset,
         groupSeparator,
+        decimalSeparator,
         numberTextStyle,
         letterWidth,
+        decimalPlaces,
+        odometerNumber,
       ),
       transitionOut: (value, place, animation) => _buildSlideOdometerDigit(
         value,
@@ -58,34 +54,25 @@ class AnimatedSlideOdometerNumber extends StatelessWidget {
         1 - animation,
         verticalOffset * animation,
         groupSeparator,
+        decimalSeparator,
         numberTextStyle,
         letterWidth,
+        decimalPlaces,
+        odometerNumber,
       ),
       duration: duration,
     );
   }
 }
 
-/// The ExplicitlyAnimatedWidget uses the [OdometerTransition]
-/// with the sliding and fading digits transitions.
 class SlideOdometerTransition extends StatelessWidget {
   final Animation<OdometerNumber> odometerAnimation;
-
-  /// The width of the SizedBox widget around each digit avoids the movement
-  /// of the digits when they change.
   final double letterWidth;
-
-  /// A widget that is used to separate digit groups.
-  ///
-  /// For example, if you pass the Text(',') as the separator,
-  /// the 10000 value result will be rendered as '10,000'.
   final Widget? groupSeparator;
-
-  /// The digit's [TextStyle].
+  final Widget? decimalSeparator;
   final TextStyle? numberTextStyle;
-
-  /// The vertical offset is used to translate digits.
   final double verticalOffset;
+  final int decimalPlaces;
 
   const SlideOdometerTransition({
     Key? key,
@@ -94,6 +81,8 @@ class SlideOdometerTransition extends StatelessWidget {
     required this.letterWidth,
     this.verticalOffset = 20,
     this.groupSeparator,
+    this.decimalSeparator,
+    this.decimalPlaces = 0,
   }) : super(key: key);
 
   @override
@@ -101,24 +90,28 @@ class SlideOdometerTransition extends StatelessWidget {
     return OdometerTransition(
       odometerAnimation: odometerAnimation,
       transitionIn: (value, place, animation) => _buildSlideOdometerDigit(
-
         value,
         place,
-        animation < 0.02 ? 0.85 + (animation / 0.02) * (1.0 - 0.85) : 1.0, // Opacity from 0.85 to 1.0 in 0.2s
-        verticalOffset * (1.0 - animation), // Bottom to top
+        animation < 0.02 ? 0.85 + (animation / 0.02) * (1.0 - 0.85) : 1.0,
+        verticalOffset * (1.0 - animation),
         groupSeparator,
+        decimalSeparator,
         numberTextStyle,
         letterWidth,
+        decimalPlaces,
+        odometerAnimation.value,
       ),
       transitionOut: (value, place, animation) => _buildSlideOdometerDigit(
-
         value,
         place,
-        animation <= 0.99 ? 1.0 : 1 - ((animation - 0.99) / 0.1).clamp(0.0, 1.0), // 90% full opacity, last 10% fade to 0
-        verticalOffset * (animation * -1), // Center to above
+        animation <= 0.99 ? 1.0 : 1 - ((animation - 0.99) / 0.1).clamp(0.0, 1.0),
+        verticalOffset * (animation * -1),
         groupSeparator,
+        decimalSeparator,
         numberTextStyle,
         letterWidth,
+        decimalPlaces,
+        odometerAnimation.value,
       ),
     );
   }
@@ -130,13 +123,36 @@ Widget _buildSlideOdometerDigit(
   double opacity,
   double offsetY,
   Widget? groupSeparator,
+  Widget? decimalSeparator,
   TextStyle? numberTextStyle,
   double letterWidth,
+  int decimalPlaces,
+  OdometerNumber odometerNumber,
 ) {
-  final d = place - 1;
   Widget digitWidget = _valueText(value, opacity, offsetY, numberTextStyle, letterWidth);
 
-  if (groupSeparator != null && place > 0 && d != 0 && d % 3 == 0) {
+  // Calculate number of integer digits
+  int integerDigits = 1;
+  int tempNumber = odometerNumber.number ~/ 100;
+  while (tempNumber > 0) {
+    integerDigits++;
+    tempNumber ~/= 10;
+  }
+
+  // Place decimal separator after integer digits
+  if (decimalSeparator != null && place == decimalPlaces + integerDigits) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        decimalSeparator,
+        digitWidget,
+      ],
+    );
+  }
+
+  // Place group separator for integer part
+  final d = place - decimalPlaces - integerDigits;
+  if (groupSeparator != null && place > decimalPlaces + integerDigits && d > 0 && d % 4 == 0) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -145,6 +161,7 @@ Widget _buildSlideOdometerDigit(
       ],
     );
   }
+
   return digitWidget;
 }
 
