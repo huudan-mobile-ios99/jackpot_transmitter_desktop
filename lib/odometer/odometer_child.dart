@@ -255,15 +255,8 @@ class _GameOdometerChildState extends State<GameOdometerChild>
         //   ),
         // ),
         // const SizedBox(width: 8.0),
-        Container(
-          // padding: EdgeInsets.symmetric(horizontal: 26, vertical: 0),
-          // decoration: BoxDecoration(
-          //   color: Colors.blue.withOpacity(0.2),
-          //   borderRadius: BorderRadius.circular(26),
-          //   border: Border.all(color: Colors.yellow.shade100, width: 1),
-          // ),
-          child: SlideOdometerTransition(
-            verticalOffset: verticalOffset*1.35,
+        SlideOdometerTransition(
+            verticalOffset: verticalOffset,
             groupSeparator: Text(
               ',',
               style: TextStyle(
@@ -273,7 +266,7 @@ class _GameOdometerChildState extends State<GameOdometerChild>
                 fontWeight: FontWeight.bold,
               ),
             ),
-            letterWidth: letterWidth*1.15,
+            letterWidth: letterWidth,
             odometerAnimation: odometerAnimation,
             numberTextStyle: TextStyle(
             fontSize: fontSize,
@@ -289,7 +282,6 @@ class _GameOdometerChildState extends State<GameOdometerChild>
             ],
           ),
           ),
-        ),
       ],
     );
   }

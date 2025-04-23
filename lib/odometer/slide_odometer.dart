@@ -173,6 +173,8 @@ class SlideOdometerTransition extends StatelessWidget {
     );
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
@@ -234,7 +236,7 @@ class SlideOdometerTransition extends StatelessWidget {
                   // Previous digit (below)
                   _buildDigit(
                     prevDigit,
-                    1.0, // Always visible
+                    0.25, // Always visible
                     verticalOffset * (1.0 + progress), // Starts below, moves up
                     place,
                   ),
@@ -248,7 +250,7 @@ class SlideOdometerTransition extends StatelessWidget {
                   // Next digit (above)
                   _buildDigit(
                     nextDigit,
-                    1.0, // Always visible
+                    0.25, // Always visible
                     verticalOffset * (progress - 1.0), // Starts above, moves to center
                     place,
                   ),
