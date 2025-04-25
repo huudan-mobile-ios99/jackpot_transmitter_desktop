@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:playtech_transmitter_app/color_custom.dart';
+import 'package:playtech_transmitter_app/jackpot_body.dart';
 import 'package:playtech_transmitter_app/jackpot_view.dart';
 import 'package:playtech_transmitter_app/odometer/odometer_child_custom.dart';
 import 'package:playtech_transmitter_app/odometer_style2/odometer_child2.dart';
+import 'package:playtech_transmitter_app/odometer_style3/odometer_child3.dart';
 import 'package:web_socket_channel/io.dart';
 
 class JackpotDisplay extends StatefulWidget {
@@ -95,9 +97,10 @@ class JackpotDisplayState extends State<JackpotDisplay> {
       body: Center(
         child: isConnected
             ?
-            GameOdometerChildStyle2(startValue1: previousJackpotValue, endValue1: jackpotValue)
+            // JackpotBodyPage(startValue: previousJackpotValue, endValue: jackpotValue)
+            // GameOdometerChildStyle2(startValue1: previousJackpotValue, endValue1: jackpotValue)
+            GameOdometerChildStyle3(startValue: previousJackpotValue, )
             // GameOdometerChild(startValue: previousJackpotValue, endValue: jackpotValue,)
-
             :  Text(
                 "Connecting to WebSocket...",
                 style: TextStyle(

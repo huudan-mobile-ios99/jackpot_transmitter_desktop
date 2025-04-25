@@ -247,33 +247,39 @@ class _GameOdometerChildState extends State<GameOdometerChild>
 
   @override
   Widget build(BuildContext context) {
-    final letterWidth = fontSize * 0.6; // Adjusted for better spacing
-    final verticalOffset = fontSize * 0.75; // Positive for bottom-to-top
+    final letterWidth = fontSize * 0.85; // Adjusted for better spacing
+    final verticalOffset = fontSize * 0.9; // Positive for bottom-to-top
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.baseline,
-      textBaseline: TextBaseline.alphabetic,
-      children: [
-        Text("\$", style:textStyle),
-        const SizedBox(width: 8.0),
-        SlideOdometerTransitionCustom(
-            verticalOffset: verticalOffset,
-            groupSeparator: Text(
-              '',
-              style: TextStyle(
-                fontSize: fontSize,
-                color: ColorCustom.yellow_gradient3,
-                fontFamily: fontFamily,
-                fontWeight: FontWeight.bold,
+    return ClipRRect(
+      child: Container(
+        width: 1000.0,
+        height: 145.5,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
+          children: [
+            Text("\$", style:textStyle),
+            const SizedBox(width: 8.0),
+            SlideOdometerTransitionCustom(
+                verticalOffset: verticalOffset,
+                groupSeparator: Text(
+                  '',
+                  style: TextStyle(
+                    fontSize: fontSize,
+                    color: ColorCustom.yellow_gradient3,
+                    fontFamily: fontFamily,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                letterWidth: letterWidth,
+                odometerAnimation: odometerAnimation,
+                numberTextStyle:textStyle
               ),
-            ),
-            letterWidth: letterWidth,
-            odometerAnimation: odometerAnimation,
-            numberTextStyle:textStyle
-          ),
-      ],
+          ],
+        ),
+      ),
     );
   }
 }

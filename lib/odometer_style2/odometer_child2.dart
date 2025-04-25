@@ -38,10 +38,6 @@ class _GameOdometerChildStyle2State extends State<GameOdometerChildStyle2>
     ],
   );
 
-  Duration _calculateDuration() {
-    return const Duration(seconds: 30);
-  }
-
   @override
   void initState() {
     super.initState();
@@ -50,7 +46,7 @@ class _GameOdometerChildStyle2State extends State<GameOdometerChildStyle2>
   }
 
   void _initializeAnimation() {
-    final duration = _calculateDuration();
+    final duration = Duration(seconds:30);
     animationController = AnimationController(
       duration: duration,
       vsync: this,
@@ -71,7 +67,7 @@ class _GameOdometerChildStyle2State extends State<GameOdometerChildStyle2>
     ).animate(
       CurvedAnimation(
         parent: animationController,
-        curve: Curves.easeInOut,
+        curve: Curves.linear,
       ),
     );
   }
@@ -132,3 +128,5 @@ class _GameOdometerChildStyle2State extends State<GameOdometerChildStyle2>
     );
   }
 }
+
+

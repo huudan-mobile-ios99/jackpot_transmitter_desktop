@@ -234,12 +234,12 @@ class SlideOdometerTransitionCustom extends StatelessWidget {
                 clipBehavior: Clip.none, // Allow digits to be visible outside bounds
                 children: [
                   // Previous digit (below)
-                  _buildDigit(
-                    prevDigit,
-                    0.25, // Always visible
-                    verticalOffset * (1.0 + progress), // Starts below, moves up
-                    place,
-                  ),
+                  // _buildDigit(
+                  //   prevDigit,
+                  //   0.25, // Always visible
+                  //   verticalOffset * (1.0 + progress), // Starts below, moves up
+                  //   place,
+                  // ),
                   // Current digit (center)
                   _buildDigit(
                     digitValue,
@@ -248,12 +248,12 @@ class SlideOdometerTransitionCustom extends StatelessWidget {
                     place,
                   ),
                   // Next digit (above)
-                  _buildDigit(
-                    nextDigit,
-                    0.25, // Always visible
-                    verticalOffset * (progress - 1.0), // Starts above, moves to center
-                    place,
-                  ),
+                  // _buildDigit(
+                  //   nextDigit,
+                  //   0.25, // Always visible
+                  //   verticalOffset * (progress - 1.0), // Starts above, moves to center
+                  //   place,
+                  // ),
                 ],
               ),
             ),
