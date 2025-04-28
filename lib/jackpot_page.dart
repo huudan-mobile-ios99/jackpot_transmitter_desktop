@@ -99,7 +99,7 @@ class JackpotDisplayState extends State<JackpotDisplay> {
             ?
             // JackpotBodyPage(startValue: previousJackpotValue, endValue: jackpotValue)
             // GameOdometerChildStyle2(startValue1: previousJackpotValue, endValue1: jackpotValue)
-            GameOdometerChildStyle3(startValue: previousJackpotValue, )
+            GameOdometerChildStyle3(startValue: previousJackpotValue, endValue: jackpotValue,)
             // GameOdometerChild(startValue: previousJackpotValue, endValue: jackpotValue,)
             :  Text(
                 "Connecting to WebSocket...",

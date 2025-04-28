@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:playtech_transmitter_app/odometer_style3/odometer_calculator.dart';
 import 'package:playtech_transmitter_app/odometer_style3/odometer_number3.dart';
 import 'package:playtech_transmitter_app/odometer_style3/slide_odometer3.dart';
+import 'dart:async';
+
+
 
 class GameOdometerChildStyle3 extends StatefulWidget {
   final double startValue;
+  final double endValue;
+  final int totalDuration; // Total duration in seconds (default: 30)
 
   const GameOdometerChildStyle3({
     Key? key,
     required this.startValue,
+    required this.endValue,
+    this.totalDuration = 30,
   }) : super(key: key);
 
   @override
@@ -18,10 +26,12 @@ class _GameOdometerChildStyle3State extends State<GameOdometerChildStyle3>
     with TickerProviderStateMixin {
   late AnimationController animationController;
   late Animation<OdometerNumber> odometerAnimation;
-
   late double currentValue;
   final double fontSize = 125;
   final String fontFamily = 'Poppins';
+  late int durationPerStep; // Calculated dynamically
+  late int integerDigits=0; // Cache integer digits
+
   final textStyle = const TextStyle(
     fontSize: 125,
     color: Colors.white,
@@ -31,64 +41,108 @@ class _GameOdometerChildStyle3State extends State<GameOdometerChildStyle3>
       Shadow(
         color: Colors.orangeAccent,
         offset: Offset(0, 2.5),
-        blurRadius: 16,
+        blurRadius: 8,
       ),
     ],
   );
+
+  Timer? _animationTimer;
+
 
   @override
   void initState() {
     super.initState();
     currentValue = widget.startValue;
-    _initializeAnimation(currentValue, currentValue);
+    durationPerStep = calculationDurationPerStep(
+      totalDuration: widget.totalDuration,
+      startValue: widget.startValue,
+      endValue: widget.endValue,
+    );
+    // _initializeAnimationController();
+    // _updateAnimation(currentValue, currentValue);
+    // _startAutoAnimation();
+    if (widget.startValue == 0.0) {
+      currentValue = widget.endValue;
+    } else {
+      currentValue = widget.startValue;
+    }
+    _initializeAnimationController();
+    _updateAnimation(currentValue, currentValue);
+    if (widget.startValue != 0.0) {
+      _startAutoAnimation();
+    }
   }
 
-  void _initializeAnimation(double start, double end) {
-    const duration = Duration(milliseconds: 150);
+
+
+  void _initializeAnimationController() {
     animationController = AnimationController(
-      duration: duration,
+      duration: Duration(milliseconds: durationPerStep),
       vsync: this,
     );
+  }
 
+  void _updateAnimation(double start, double end) {
     odometerAnimation = OdometerTween(
-      begin: OdometerNumber((start * 100).round()), // Scale for two decimal places
+      begin: OdometerNumber((start * 100).round()),
       end: OdometerNumber((end * 100).round()),
     ).animate(
       CurvedAnimation(
         parent: animationController,
-        curve: Curves.linear,
+        curve: Curves.easeInOut,
       ),
     );
   }
 
-  void _incrementValue() {
-    setState(() {
-      final nextValue = currentValue + 0.01; // Increment by 0.01
-      animationController.dispose();
-      _initializeAnimation(currentValue, nextValue);
-      currentValue = nextValue;
-      animationController.forward(from: 0.0);
+  void _startAutoAnimation() {
+    const increment = 0.01;
+    final interval = Duration(milliseconds: durationPerStep);
+    _animationTimer?.cancel();
+    _animationTimer = Timer.periodic(interval, (timer) {
+      if (currentValue >= widget.endValue || !mounted) {
+        timer.cancel();
+        return;
+      }
+      setState(() {
+        final nextValue = (currentValue + increment).clamp(currentValue, widget.endValue);
+        _updateAnimation(currentValue, nextValue);
+        currentValue = nextValue;
+        animationController.forward(from: 0.0);
+      });
     });
   }
 
   @override
   void didUpdateWidget(covariant GameOdometerChildStyle3 oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.startValue != oldWidget.startValue) {
+    if (widget.startValue != oldWidget.startValue ||
+        widget.endValue != oldWidget.endValue ||
+        widget.totalDuration != oldWidget.totalDuration) {
       setState(() {
+        _animationTimer?.cancel();
         currentValue = widget.startValue;
-        animationController.dispose();
-        _initializeAnimation(currentValue, currentValue);
+        durationPerStep = calculationDurationPerStep(
+          totalDuration: widget.totalDuration,
+          startValue: widget.startValue,
+          endValue: widget.endValue,
+        );
+        animationController
+          ..stop()
+          ..duration = Duration(milliseconds: durationPerStep);
+        _updateAnimation(currentValue, currentValue);
         animationController.forward(from: 0.0);
+        _startAutoAnimation();
       });
     }
   }
 
   @override
   void dispose() {
+    _animationTimer?.cancel();
     animationController.dispose();
     super.dispose();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -114,14 +168,17 @@ class _GameOdometerChildStyle3State extends State<GameOdometerChildStyle3>
                     children: [
                       Text('\$', style: textStyle),
                       const SizedBox(width: 8),
-                      SlideOdometerTransition(
-                        verticalOffset: verticalOffset,
-                        groupSeparator: Text(',', style: textStyle),
-                        decimalSeparator: Text('', style: textStyle),
-                        letterWidth: letterWidth,
-                        odometerAnimation: odometerAnimation,
-                        numberTextStyle: textStyle,
-                        decimalPlaces: 2, // Show two decimal places
+                      RepaintBoundary(
+                        child: SlideOdometerTransition(
+                          verticalOffset: verticalOffset,
+                          groupSeparator: Text(',',style:textStyle),
+                          decimalSeparator: Text('.',style:textStyle),
+                          letterWidth: letterWidth,
+                          odometerAnimation: odometerAnimation,
+                          numberTextStyle: textStyle,
+                          decimalPlaces: 2,
+                          integerDigits:integerDigits
+                        ),
                       ),
                     ],
                   ),
@@ -130,10 +187,9 @@ class _GameOdometerChildStyle3State extends State<GameOdometerChildStyle3>
             ),
           ),
         ),
-        const SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: _incrementValue,
-          child: const Text('Increment'),
+        Text(
+          'Start: ${widget.startValue.toStringAsFixed(2)} -> End: ${widget.endValue.toStringAsFixed(2)}',
+          style: const TextStyle(color: Colors.white),
         ),
       ],
     );
