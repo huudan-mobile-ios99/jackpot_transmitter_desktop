@@ -107,6 +107,6 @@ class _JackpotBodyPageState extends State<JackpotBodyPage> with TickerProviderSt
     final totalIncrements = endNumber - startNumber;
     // Duration per increment
     final durationPerIncrement = totalDurationMs / totalIncrements;
-    print('getSecondDecimalIncrementDuration: $durationPerIncrement');
+    debugPrint('getSecondDecimalIncrementDuration: $durationPerIncrement');
     return durationPerIncrement;
   }

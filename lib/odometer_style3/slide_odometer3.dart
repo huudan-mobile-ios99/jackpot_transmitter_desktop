@@ -324,7 +324,7 @@ Widget _buildSlideOdometerDigit(
   // Place decimal separator after integer digits
   if (decimalSeparator != null && place == integerDigits + decimalPlaces) {
     return Row(
-      mainAxisSize: MainAxisSize.min,
+      mainAxisSize: MainAxisSize.max,
       children: [
         decimalSeparator,
         digitWidget,
@@ -334,9 +334,9 @@ Widget _buildSlideOdometerDigit(
 
   // Place group separator for integer part
   final d = place - decimalPlaces - integerDigits;
-  if (groupSeparator != null && place > decimalPlaces + integerDigits && d > 0 && d % 4 == 0) {
+  if (groupSeparator != null && place > decimalPlaces + integerDigits && d > 0 && d % 3 == 0) {
     return Row(
-      mainAxisSize: MainAxisSize.min,
+      mainAxisSize: MainAxisSize.max,
       children: [
         digitWidget,
         groupSeparator,
@@ -367,4 +367,4 @@ Widget _valueText(
           ),
         ),
       ),
-    );
+);

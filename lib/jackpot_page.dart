@@ -26,9 +26,15 @@ class JackpotDisplayState extends State<JackpotDisplay> {
   final String fontFamily = 'OpenSans';
   final int animationSpeed = 2000; // Match HTML animation speed (2000ms)
 
-  // State variables
-  double jackpotValue = 0.0; // Current jackpot value
-  double previousJackpotValue = 0.0; // Previous jackpot value
+
+  // State variables for level 0
+  double jackpotValueLevel0 = 0.0;
+  double previousJackpotValueLevel0 = 0.0;
+  // State variables for level 1
+  double jackpotValueLevel1 = 0.0;
+  double previousJackpotValueLevel1 = 0.0;
+
+
   late IOWebSocketChannel channel; // WebSocket channel
   bool isConnected = false;
   int secondToReconnect = 5;
@@ -47,14 +53,18 @@ class JackpotDisplayState extends State<JackpotDisplay> {
         (message) {
           // Parse WebSocket message
           final data = jsonDecode(message);
-          if (data['Id'] == level) {
-            final newValue = double.tryParse(data['Value'].toString()) ?? 0.0;
-            setState(() {
-              previousJackpotValue = jackpotValue; // Save current value as previous
-              jackpotValue = newValue; // Update to new value
-              isConnected = true;
-            });
-          }
+          final level = data['Id'].toString();
+          final newValue = double.tryParse(data['Value'].toString()) ?? 0.0;
+          setState(() {
+            if (level == "0") {
+              previousJackpotValueLevel0 = jackpotValueLevel0; // Save current as previous
+              jackpotValueLevel0 = newValue; // Update to new value
+            } else if (level == "1") {
+              previousJackpotValueLevel1 = jackpotValueLevel1; // Save current as previous
+              jackpotValueLevel1 = newValue; // Update to new value
+            }
+            isConnected = true;
+          });
         },
         onError: (error) {
           debugPrint("WebSocket error: $error");
@@ -97,12 +107,17 @@ class JackpotDisplayState extends State<JackpotDisplay> {
       body: Center(
         child: isConnected
             ?
-            // JackpotBodyPage(startValue: previousJackpotValue, endValue: jackpotValue)
-            // GameOdometerChildStyle2(startValue1: previousJackpotValue, endValue1: jackpotValue)
-            GameOdometerChildStyle3(startValue: previousJackpotValue, endValue: jackpotValue,)
-            // GameOdometerChild(startValue: previousJackpotValue, endValue: jackpotValue,)
+            // JackpotBodyPage(startValue: previousJackpotValueLevel0, endValue: jackpotValueLevel0)
+            // GameOdometerChildStyle2(startValue1: previousJackpotValueLevel0, endValue1: jackpotValueLevel0)
+            Column(
+              children: [
+                GameOdometerChildStyle3(startValue: previousJackpotValueLevel1, endValue: jackpotValueLevel1,),
+                GameOdometerChildStyle3(startValue: previousJackpotValueLevel0, endValue: jackpotValueLevel0,),
+              ],
+            )
+            // GameOdometerChild(startValue: previousJackpotValueLevel0, endValue: jackpotValueLevel0,)
             :  Text(
-                "Connecting to WebSocket...",
+                "Connecting ...",
                 style: TextStyle(
                   fontSize: 12.0,
                   color: Colors.white,

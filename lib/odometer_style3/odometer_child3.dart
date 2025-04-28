@@ -27,13 +27,13 @@ class _GameOdometerChildStyle3State extends State<GameOdometerChildStyle3>
   late AnimationController animationController;
   late Animation<OdometerNumber> odometerAnimation;
   late double currentValue;
-  final double fontSize = 125;
+  final double fontSize = 145;
   final String fontFamily = 'Poppins';
   late int durationPerStep; // Calculated dynamically
   late int integerDigits=0; // Cache integer digits
 
   final textStyle = const TextStyle(
-    fontSize: 125,
+    fontSize: 145,
     color: Colors.white,
     fontFamily: 'Poppins',
     fontWeight: FontWeight.bold,
@@ -89,7 +89,7 @@ class _GameOdometerChildStyle3State extends State<GameOdometerChildStyle3>
     ).animate(
       CurvedAnimation(
         parent: animationController,
-        curve: Curves.easeInOut,
+        curve: Curves.linear,
       ),
     );
   }
@@ -146,8 +146,8 @@ class _GameOdometerChildStyle3State extends State<GameOdometerChildStyle3>
 
   @override
   Widget build(BuildContext context) {
-    final letterWidth = fontSize * 0.85;
-    final verticalOffset = fontSize * 1;
+    final letterWidth = fontSize * 0.875;
+    final verticalOffset = fontSize * 1.175;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -155,16 +155,17 @@ class _GameOdometerChildStyle3State extends State<GameOdometerChildStyle3>
         ClipRect(
           child: Container(
             alignment: Alignment.center,
-            width: 1000.0,
-            height: 145.5,
+            width: 2000.0,
+            height: 180.0,
+            color:Colors.white12,
             child: SingleChildScrollView(
               child: Stack(
                 alignment: Alignment.center,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
+                    mainAxisSize: MainAxisSize.max,
                     children: [
                       Text('\$', style: textStyle),
                       const SizedBox(width: 8),
@@ -188,7 +189,7 @@ class _GameOdometerChildStyle3State extends State<GameOdometerChildStyle3>
           ),
         ),
         Text(
-          'Start: ${widget.startValue.toStringAsFixed(2)} -> End: ${widget.endValue.toStringAsFixed(2)}',
+          '${widget.startValue.toStringAsFixed(2)} -> ${widget.endValue.toStringAsFixed(2)}',
           style: const TextStyle(color: Colors.white),
         ),
       ],
