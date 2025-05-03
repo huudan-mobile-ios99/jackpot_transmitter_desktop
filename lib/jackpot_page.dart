@@ -2,6 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:playtech_transmitter_app/color_custom.dart';
+import 'package:playtech_transmitter_app/jackpot_body.dart';
+import 'package:playtech_transmitter_app/odometer/odometer_child_custom.dart';
+import 'package:playtech_transmitter_app/odometer_style2/odometer_child2.dart';
 import 'package:playtech_transmitter_app/odometer_style3/odometer_child3.dart';
 import 'package:web_socket_channel/io.dart';
 //vegas :4
@@ -143,7 +146,7 @@ class JackpotDisplayState extends State<JackpotDisplay> {
       body: Center(
         child: isConnected
             ?
-            // JackpotBodyPage(startValue: previousJackpotValueLevelVegas, endValue: jackpotValueLevelVegas)
+            // GameOdometerChild(startValue: previousJackpotValueLevelVegas, endValue: jackpotValueLevelVegas)
             // GameOdometerChildStyle2(startValue1: previousJackpotValueLevelVegas, endValue1: jackpotValueLevelVegas)
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -161,7 +164,7 @@ class JackpotDisplayState extends State<JackpotDisplay> {
 
                   ],
                 ),
-                const SizedBox(height: 18,),
+                const SizedBox(height: 64,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,

@@ -5,13 +5,15 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 
 class GameOdometerChildStyle2 extends StatefulWidget {
-  final double startValue1;
-  final double endValue1;
+  final double startValue;
+  final double endValue;
+  final String nameJP;
 
   const GameOdometerChildStyle2({
     Key? key,
-    required this.startValue1,
-    required this.endValue1,
+    required this.startValue,
+    required this.endValue,
+    required this.nameJP,
   }) : super(key: key);
 
   @override
@@ -22,18 +24,18 @@ class _GameOdometerChildStyle2State extends State<GameOdometerChildStyle2>
     with TickerProviderStateMixin {
   late AnimationController animationController;
   late Animation<OdometerNumber> animation;
-  final double fontSize = 125;
-  final String fontFamily = 'YoureGone';
+  final double fontSize = 75;
+  final String fontFamily = 'Poppins';
   final textStyle = const TextStyle(
-    fontSize: 125,
+    fontSize: 75,
     color: Colors.white,
-    fontFamily: 'YoureGone',
+    fontFamily: 'Poppins',
     fontWeight: FontWeight.bold,
     shadows: [
       Shadow(
         color: Colors.orangeAccent,
         offset: Offset(0, 2.5),
-        blurRadius: 16,
+        blurRadius: 4,
       ),
     ],
   );
@@ -53,10 +55,10 @@ class _GameOdometerChildStyle2State extends State<GameOdometerChildStyle2>
     );
 
     // Convert doubles to integer representation (e.g., 306.53 -> 30653)
-    final startInt = widget.startValue1.truncate();
-    final startDecimal = ((widget.startValue1 - startInt) * 100).round();
-    final endInt = widget.endValue1.truncate();
-    final endDecimal = ((widget.endValue1 - endInt) * 100).round();
+    final startInt = widget.startValue.truncate();
+    final startDecimal = ((widget.startValue - startInt) * 100).round();
+    final endInt = widget.endValue.truncate();
+    final endDecimal = ((widget.endValue - endInt) * 100).round();
 
     final startNumber = startInt * 100 + startDecimal;
     final endNumber = endInt * 100 + endDecimal;
@@ -75,8 +77,8 @@ class _GameOdometerChildStyle2State extends State<GameOdometerChildStyle2>
   @override
   void didUpdateWidget(covariant GameOdometerChildStyle2 oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.startValue1 != oldWidget.startValue1 ||
-        widget.endValue1 != oldWidget.endValue1) {
+    if (widget.startValue != oldWidget.startValue ||
+        widget.endValue != oldWidget.endValue) {
       animationController.dispose();
       _initializeAnimation();
       animationController.forward(from: 0.0);
@@ -92,13 +94,13 @@ class _GameOdometerChildStyle2State extends State<GameOdometerChildStyle2>
   @override
   Widget build(BuildContext context) {
     final letterWidth = fontSize * 0.85;
-    final verticalOffset = fontSize * 1;
+    final verticalOffset = fontSize * 1.25;
 
     return ClipRect(
       child: Container(
         alignment: Alignment.center,
-        width: 1000.0,
-        height: 145.5,
+        width: 700,
+        height: 115,
         child: SingleChildScrollView(
           child: Stack(
             alignment: Alignment.center,

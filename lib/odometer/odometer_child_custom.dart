@@ -162,11 +162,13 @@ import 'package:playtech_transmitter_app/odometer/slide_odometer_custom.dart';
 class GameOdometerChild extends StatefulWidget {
   final double startValue;
   final double endValue;
+  final String nameJP;
 
   const GameOdometerChild({
     Key? key,
     required this.startValue,
     required this.endValue,
+    required this.nameJP
   }) : super(key: key);
 
   @override
@@ -176,18 +178,18 @@ class _GameOdometerChildState extends State<GameOdometerChild>
     with TickerProviderStateMixin {
   late AnimationController controller;
   late Animation<OdometerNumberCustom> odometerAnimation;
-  final double fontSize = 125;
-  final String fontFamily = 'YoureGone';
+  final double fontSize = 75;
+  final String fontFamily = 'Poppins';
   final  textStyle = TextStyle(
-            fontSize: 125,
+            fontSize: 75,
             color: Colors.white,
-            fontFamily: 'YoureGone',
+            fontFamily: 'Poppins',
             fontWeight: FontWeight.bold,
             shadows: const [
               Shadow(
-                color: Colors.orangeAccent,
+                color: Colors.blue,
                 offset: Offset(0, 2.5),
-                blurRadius: 16,
+                blurRadius: 8,
               ),
             ],
           );
@@ -252,8 +254,8 @@ class _GameOdometerChildState extends State<GameOdometerChild>
 
     return ClipRRect(
       child: Container(
-        width: 1000.0,
-        height: 145.5,
+        width: 600.0,
+        height: 125.0,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,

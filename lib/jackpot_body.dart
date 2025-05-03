@@ -6,11 +6,13 @@ import 'package:playtech_transmitter_app/odometer_style2/slide_odometer.dart';
 class JackpotBodyPage extends StatefulWidget {
   final double startValue;
   final double endValue;
+  final String nameJP;
 
   const JackpotBodyPage({
     Key? key,
     required this.startValue,
     required this.endValue,
+    required this.nameJP,
   }) : super(key: key);
 
   @override
@@ -18,11 +20,11 @@ class JackpotBodyPage extends StatefulWidget {
 }
 
 class _JackpotBodyPageState extends State<JackpotBodyPage> with TickerProviderStateMixin {
-  final double fontSize = 27;
+  final double fontSize = 75;
   final int durationCircle = 30000; //30000ms = 30s
   final String fontFamily = 'OpenSans';
   final textStyle = const TextStyle(
-    fontSize: 27,
+    fontSize: 75,
     color: Colors.white,
     fontFamily: 'OpenSans',
   );
