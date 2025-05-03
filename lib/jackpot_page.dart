@@ -27,11 +27,10 @@ class JackpotDisplayState extends State<JackpotDisplay> {
   final int animationSpeed = 2000; // Match HTML animation speed (2000ms)
 
 
-  // State variables for level 0
-  double jackpotValueLevel0 = 0.0;
+
+  double jackpotValueLevel0 = 0.0;  // State variables for level 0
   double previousJackpotValueLevel0 = 0.0;
-  // State variables for level 1
-  double jackpotValueLevel1 = 0.0;
+  double jackpotValueLevel1 = 0.0;  // State variables for level 1
   double previousJackpotValueLevel1 = 0.0;
 
 
@@ -53,6 +52,8 @@ class JackpotDisplayState extends State<JackpotDisplay> {
         (message) {
           // Parse WebSocket message
           final data = jsonDecode(message);
+          // debugPrint("data data: $data");
+          debugPrint("data message: $message");
           final level = data['Id'].toString();
           final newValue = double.tryParse(data['Value'].toString()) ?? 0.0;
           setState(() {
@@ -110,13 +111,17 @@ class JackpotDisplayState extends State<JackpotDisplay> {
             // JackpotBodyPage(startValue: previousJackpotValueLevel0, endValue: jackpotValueLevel0)
             // GameOdometerChildStyle2(startValue1: previousJackpotValueLevel0, endValue1: jackpotValueLevel0)
             Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                GameOdometerChildStyle3(startValue: previousJackpotValueLevel1, endValue: jackpotValueLevel1,),
-                GameOdometerChildStyle3(startValue: previousJackpotValueLevel0, endValue: jackpotValueLevel0,),
+                GameOdometerChildStyle3(startValue: previousJackpotValueLevel1, endValue: jackpotValueLevel1,nameJP:"Daily"),
+                const SizedBox(height:16),
+                GameOdometerChildStyle3(startValue: previousJackpotValueLevel0, endValue: jackpotValueLevel0,nameJP:"Frequent"),
               ],
             )
             // GameOdometerChild(startValue: previousJackpotValueLevel0, endValue: jackpotValueLevel0,)
-            :  Text(
+            :  const Text(
                 "Connecting ...",
                 style: TextStyle(
                   fontSize: 12.0,

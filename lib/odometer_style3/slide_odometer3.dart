@@ -325,6 +325,8 @@ Widget _buildSlideOdometerDigit(
   if (decimalSeparator != null && place == integerDigits + decimalPlaces) {
     return Row(
       mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         decimalSeparator,
         digitWidget,
@@ -334,8 +336,10 @@ Widget _buildSlideOdometerDigit(
 
   // Place group separator for integer part
   final d = place - decimalPlaces - integerDigits;
-  if (groupSeparator != null && place > decimalPlaces + integerDigits && d > 0 && d % 3 == 0) {
+  if (groupSeparator != null && place > decimalPlaces + integerDigits && d > 0 && d % 4 == 0) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.max,
       children: [
         digitWidget,

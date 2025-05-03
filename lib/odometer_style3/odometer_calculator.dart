@@ -10,7 +10,7 @@ int calculationDurationPerStep({
     }
     final totalSteps = ((endValue - startValue) / 0.01).ceil();
     final durationMs = (totalDuration * 1000) / totalSteps;
-    debugPrint('calculationDurationPerStep: $durationMs Ms');
+    // debugPrint('calculationDurationPerStep: $durationMs Ms');
     return durationMs.round().clamp(1, 1000);
   }
 

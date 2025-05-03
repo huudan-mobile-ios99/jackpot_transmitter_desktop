@@ -17,7 +17,7 @@ Future<void> main() async {
   runApp(const MyApp());
   doWhenWindowReady(() {
       appWindow
-        ..minSize = Size(1250, 675)
+        ..minSize = Size(1250, 625)
         ..size = Size(1375, 825)
         ..alignment = Alignment.center
         ..startDragging()
@@ -30,13 +30,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // showPerformanceOverlay: true,
       debugShowCheckedModeBanner: false,
       debugShowMaterialGrid: false,
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.transparent
       ),
-      home: MyAppBody(),
+      home: const MyAppBody(),
     );
   }
 }
@@ -68,7 +67,6 @@ class MyAppBodyState extends State<MyAppBody> {
   @override
   Widget build(BuildContext context) {
     return JackpotDisplay();
-
   }
 }
 

@@ -20,11 +20,11 @@ class JackpotBodyPage extends StatefulWidget {
 class _JackpotBodyPageState extends State<JackpotBodyPage> with TickerProviderStateMixin {
   final double fontSize = 27;
   final int durationCircle = 30000; //30000ms = 30s
-  final String fontFamily = 'Poppins';
+  final String fontFamily = 'OpenSans';
   final textStyle = const TextStyle(
     fontSize: 27,
     color: Colors.white,
-    fontFamily: 'Poppins',
+    fontFamily: 'OpenSans',
   );
 
   late int startInt;

@@ -80,6 +80,13 @@ flutter:
           weight: 500
         - asset: asset/font/Poppins-Bold.ttf
           weight: 900
+    - family: imprint
+      fonts:
+        - asset: asset/font/imprint-mt-shadow-1/ImprintMTShadow.ttf
+    - family: derrida
+      fonts:
+        - asset: asset/font/derrida-font/Derrida-wvM6.ttf
+
     - family: Bungee
       fonts:
         - asset: asset/font/Bungee-Regular.ttf

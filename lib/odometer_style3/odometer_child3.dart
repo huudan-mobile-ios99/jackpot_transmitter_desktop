@@ -10,12 +10,14 @@ class GameOdometerChildStyle3 extends StatefulWidget {
   final double startValue;
   final double endValue;
   final int totalDuration; // Total duration in seconds (default: 30)
+  final String nameJP;
 
   const GameOdometerChildStyle3({
     Key? key,
     required this.startValue,
     required this.endValue,
     this.totalDuration = 30,
+    required this.nameJP,
   }) : super(key: key);
 
   @override
@@ -27,21 +29,21 @@ class _GameOdometerChildStyle3State extends State<GameOdometerChildStyle3>
   late AnimationController animationController;
   late Animation<OdometerNumber> odometerAnimation;
   late double currentValue;
-  final double fontSize = 145;
-  final String fontFamily = 'Poppins';
+  final double fontSize = 155;
+  final String fontFamily = 'imprint';
   late int durationPerStep; // Calculated dynamically
   late int integerDigits=0; // Cache integer digits
 
   final textStyle = const TextStyle(
-    fontSize: 145,
+    fontSize: 155,
     color: Colors.white,
-    fontFamily: 'Poppins',
-    fontWeight: FontWeight.bold,
+    fontFamily: 'imprint',
+    fontWeight: FontWeight.normal,
     shadows: [
       Shadow(
         color: Colors.orangeAccent,
-        offset: Offset(0, 2.5),
-        blurRadius: 8,
+        offset: Offset(0, 2),
+        blurRadius: 4,
       ),
     ],
   );
@@ -146,50 +148,47 @@ class _GameOdometerChildStyle3State extends State<GameOdometerChildStyle3>
 
   @override
   Widget build(BuildContext context) {
-    final letterWidth = fontSize * 0.875;
-    final verticalOffset = fontSize * 1.175;
+    final letterWidth = fontSize * 0.575;
+    final verticalOffset = fontSize * 1.35;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         ClipRect(
           child: Container(
             alignment: Alignment.center,
-            width: 2000.0,
-            height: 180.0,
-            color:Colors.white12,
-            child: SingleChildScrollView(
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Text('\$', style: textStyle),
-                      const SizedBox(width: 8),
-                      RepaintBoundary(
-                        child: SlideOdometerTransition(
-                          verticalOffset: verticalOffset,
-                          groupSeparator: Text(',',style:textStyle),
-                          decimalSeparator: Text('.',style:textStyle),
-                          letterWidth: letterWidth,
-                          odometerAnimation: odometerAnimation,
-                          numberTextStyle: textStyle,
-                          decimalPlaces: 2,
-                          integerDigits:integerDigits
-                        ),
-                      ),
-                    ],
+            width: 1500.0,
+            height: 225.0,
+            decoration: BoxDecoration(
+              color:Colors.white12,
+              borderRadius: BorderRadius.circular(28.0)
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('\$', style: textStyle),
+                const SizedBox(width: 8),
+                RepaintBoundary(
+                  child: SlideOdometerTransition(
+                    verticalOffset: verticalOffset,
+                    groupSeparator: Text(',',style:textStyle),
+                    decimalSeparator: Text('.',style:textStyle),
+                    letterWidth: letterWidth,
+                    odometerAnimation: odometerAnimation,
+                    numberTextStyle: textStyle,
+                    decimalPlaces: 2,
+                    integerDigits:integerDigits
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
         Text(
-          '${widget.startValue.toStringAsFixed(2)} -> ${widget.endValue.toStringAsFixed(2)}',
+          '${widget.nameJP}: ${widget.startValue.toStringAsFixed(2)} -> ${widget.endValue.toStringAsFixed(2)}',
           style: const TextStyle(color: Colors.white),
         ),
       ],
