@@ -17,8 +17,8 @@ Future<void> main() async {
   runApp(const MyApp());
   doWhenWindowReady(() {
       appWindow
-        ..minSize = Size(1250, 625)
-        ..size = Size(1375, 825)
+        ..minSize = Size(1920, 1080)
+        ..size = Size(1920, 1080)
         ..alignment = Alignment.center
         ..startDragging()
         ..show();

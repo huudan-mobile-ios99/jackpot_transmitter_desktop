@@ -2,12 +2,17 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:playtech_transmitter_app/color_custom.dart';
-import 'package:playtech_transmitter_app/jackpot_body.dart';
-import 'package:playtech_transmitter_app/jackpot_view.dart';
-import 'package:playtech_transmitter_app/odometer/odometer_child_custom.dart';
-import 'package:playtech_transmitter_app/odometer_style2/odometer_child2.dart';
 import 'package:playtech_transmitter_app/odometer_style3/odometer_child3.dart';
 import 'package:web_socket_channel/io.dart';
+//vegas :4
+//monhtly:46
+//weekly:3
+//triple:35
+//dozen : 2
+//daily golden:18
+
+
+//screen resolution:1872x2600
 
 class JackpotDisplay extends StatefulWidget {
   const JackpotDisplay({Key? key}) : super(key: key);
@@ -28,10 +33,24 @@ class JackpotDisplayState extends State<JackpotDisplay> {
 
 
 
-  double jackpotValueLevel0 = 0.0;  // State variables for level 0
-  double previousJackpotValueLevel0 = 0.0;
-  double jackpotValueLevel1 = 0.0;  // State variables for level 1
-  double previousJackpotValueLevel1 = 0.0;
+  double jackpotValueLevelVegas = 0.0;
+  double previousJackpotValueLevelVegas = 0.0;
+
+  double jackpotValueLevelZMonthly = 0.0;
+  double previousJackpotValueLevelZMonthly = 0.0;
+
+  double jackpotValueLevelWeekly = 0.0;
+  double previousJackpotValueLevelWeeekly = 0.0;
+
+  double jackpotValueLevelTripple = 0.0;
+  double previousJackpotValueLevelTripple= 0.0;
+
+  double jackpotValueLevelDozen = 0.0;
+  double previousJackpotValueLevelDozen= 0.0;
+
+  double jackpotValueLevelDailyGolden = 0.0;
+  double previousJackpotValueLevelDailyGolden= 0.0;
+
 
 
   late IOWebSocketChannel channel; // WebSocket channel
@@ -53,16 +72,32 @@ class JackpotDisplayState extends State<JackpotDisplay> {
           // Parse WebSocket message
           final data = jsonDecode(message);
           // debugPrint("data data: $data");
-          debugPrint("data message: $message");
+          // debugPrint("data message: $message");
           final level = data['Id'].toString();
           final newValue = double.tryParse(data['Value'].toString()) ?? 0.0;
           setState(() {
-            if (level == "0") {
-              previousJackpotValueLevel0 = jackpotValueLevel0; // Save current as previous
-              jackpotValueLevel0 = newValue; // Update to new value
-            } else if (level == "1") {
-              previousJackpotValueLevel1 = jackpotValueLevel1; // Save current as previous
-              jackpotValueLevel1 = newValue; // Update to new value
+            if (level == "4") {
+              previousJackpotValueLevelVegas = jackpotValueLevelVegas; // Save current as previous
+              jackpotValueLevelVegas = newValue; // Update to new value
+            } else if (level == "46") {
+              previousJackpotValueLevelZMonthly = jackpotValueLevelZMonthly; // Save current as previous
+              jackpotValueLevelZMonthly = newValue; // Update to new value
+            }
+            else if (level == "3") {
+              previousJackpotValueLevelWeeekly = jackpotValueLevelWeekly; // Save current as previous
+              jackpotValueLevelWeekly = newValue; // Update to new value
+            }
+            else if (level == "35") {
+              previousJackpotValueLevelTripple = jackpotValueLevelTripple; // Save current as previous
+              jackpotValueLevelTripple = newValue; // Update to new value
+            }
+            else if (level == "2") {
+              previousJackpotValueLevelDozen = jackpotValueLevelDozen; // Save current as previous
+              jackpotValueLevelDozen = newValue; // Update to new value
+            }
+            else if (level == "34") {
+              previousJackpotValueLevelDailyGolden = jackpotValueLevelDailyGolden; // Save current as previous
+              jackpotValueLevelDailyGolden = newValue; // Update to new value
             }
             isConnected = true;
           });
@@ -108,19 +143,38 @@ class JackpotDisplayState extends State<JackpotDisplay> {
       body: Center(
         child: isConnected
             ?
-            // JackpotBodyPage(startValue: previousJackpotValueLevel0, endValue: jackpotValueLevel0)
-            // GameOdometerChildStyle2(startValue1: previousJackpotValueLevel0, endValue1: jackpotValueLevel0)
+            // JackpotBodyPage(startValue: previousJackpotValueLevelVegas, endValue: jackpotValueLevelVegas)
+            // GameOdometerChildStyle2(startValue1: previousJackpotValueLevelVegas, endValue1: jackpotValueLevelVegas)
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: MainAxisSize.max,
               children: [
-                GameOdometerChildStyle3(startValue: previousJackpotValueLevel1, endValue: jackpotValueLevel1,nameJP:"Daily"),
-                const SizedBox(height:16),
-                GameOdometerChildStyle3(startValue: previousJackpotValueLevel0, endValue: jackpotValueLevel0,nameJP:"Frequent"),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    GameOdometerChildStyle3(startValue: previousJackpotValueLevelVegas, endValue:jackpotValueLevelVegas ,nameJP:"Vegas"),
+                    GameOdometerChildStyle3(startValue:  previousJackpotValueLevelZMonthly, endValue: jackpotValueLevelZMonthly,nameJP:"Monthly"),
+                    GameOdometerChildStyle3(startValue:  previousJackpotValueLevelWeeekly, endValue: jackpotValueLevelWeekly,nameJP:"Weekly"),
+
+                  ],
+                ),
+                const SizedBox(height: 18,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    GameOdometerChildStyle3(startValue: previousJackpotValueLevelTripple, endValue:jackpotValueLevelTripple ,nameJP:"Tripple"),
+                    GameOdometerChildStyle3(startValue:  previousJackpotValueLevelDozen, endValue: jackpotValueLevelDozen,nameJP:"Dozen"),
+                    GameOdometerChildStyle3(startValue:  previousJackpotValueLevelDailyGolden, endValue: jackpotValueLevelDailyGolden,nameJP:"Daily Golden"),
+
+                  ],
+                )
               ],
             )
-            // GameOdometerChild(startValue: previousJackpotValueLevel0, endValue: jackpotValueLevel0,)
             :  const Text(
                 "Connecting ...",
                 style: TextStyle(

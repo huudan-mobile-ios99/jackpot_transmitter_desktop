@@ -29,13 +29,13 @@ class _GameOdometerChildStyle3State extends State<GameOdometerChildStyle3>
   late AnimationController animationController;
   late Animation<OdometerNumber> odometerAnimation;
   late double currentValue;
-  final double fontSize = 155;
+  final double fontSize = 75;
   final String fontFamily = 'imprint';
   late int durationPerStep; // Calculated dynamically
   late int integerDigits=0; // Cache integer digits
 
   final textStyle = const TextStyle(
-    fontSize: 155,
+    fontSize: 75,
     color: Colors.white,
     fontFamily: 'imprint',
     fontWeight: FontWeight.normal,
@@ -152,16 +152,14 @@ class _GameOdometerChildStyle3State extends State<GameOdometerChildStyle3>
     final verticalOffset = fontSize * 1.35;
 
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         ClipRect(
           child: Container(
             alignment: Alignment.center,
-            width: 1500.0,
-            height: 225.0,
+            width: 500,
+            height: 135,
             decoration: BoxDecoration(
-              color:Colors.white12,
+              // color:Colors.white12,
               borderRadius: BorderRadius.circular(28.0)
             ),
             child: Row(
@@ -187,10 +185,7 @@ class _GameOdometerChildStyle3State extends State<GameOdometerChildStyle3>
             ),
           ),
         ),
-        Text(
-          '${widget.nameJP}: ${widget.startValue.toStringAsFixed(2)} -> ${widget.endValue.toStringAsFixed(2)}',
-          style: const TextStyle(color: Colors.white),
-        ),
+        // Text('${widget.nameJP}: ${widget.startValue}->${widget.endValue}',style:TextStyle(color:Colors.white))
       ],
     );
   }
