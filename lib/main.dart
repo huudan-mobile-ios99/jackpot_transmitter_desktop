@@ -3,7 +3,13 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:flutter_acrylic/widgets/visual_effect_subview_container/visual_effect_subview_container.dart';
-import 'package:playtech_transmitter_app/jackpot_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:playtech_transmitter_app/x_jackpot/bloc/jackpot_bloc.dart';
+import 'package:playtech_transmitter_app/x_jackpot/jackpot_page.dart';
+import 'package:playtech_transmitter_app/x_jackpot/jackpot_page_websocket.dart';
+import 'package:playtech_transmitter_app/x_jackpot/screen/jackpot_screen.dart';
+import 'package:playtech_transmitter_app/x_jackpot/version/jackpot_page_v1.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,8 +23,10 @@ Future<void> main() async {
   runApp(const MyApp());
   doWhenWindowReady(() {
       appWindow
-        ..minSize = Size(1920, 1080)
-        ..size = Size(1920, 1080)
+        ..minSize = Size(960, 540)
+        ..size = Size(480, 270)
+        // ..minSize = Size(1920, 1080)
+        // ..size = Size(1920, 1080)
         ..alignment = Alignment.center
         ..startDragging()
         ..show();
@@ -66,7 +74,24 @@ class MyAppBodyState extends State<MyAppBody> {
 
   @override
   Widget build(BuildContext context) {
-    return JackpotDisplay();
+
+
+    // return  Scaffold(
+    //   body: BlocProvider(
+    //       create: (context) => JackpotBloc(),
+    //       child:  JackpotPageWebSocket(),
+    //     ),
+    // );
+
+
+    return Scaffold(
+      body: Stack(
+        children: [
+          JackpotDisplay(), //show first
+          JackpotHitScreen(), //show second
+        ],
+      )
+    );
   }
 }
 
