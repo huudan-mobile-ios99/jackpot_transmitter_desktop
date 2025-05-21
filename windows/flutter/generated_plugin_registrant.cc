@@ -8,7 +8,10 @@
 
 #include <bitsdojo_window_windows/bitsdojo_window_plugin.h>
 #include <flutter_acrylic/flutter_acrylic_plugin.h>
+#include <media_kit_libs_windows_video/media_kit_libs_windows_video_plugin_c_api.h>
+#include <media_kit_video/media_kit_video_plugin_c_api.h>
 #include <screen_retriever_windows/screen_retriever_windows_plugin_c_api.h>
+#include <volume_controller/volume_controller_plugin_c_api.h>
 #include <window_manager/window_manager_plugin.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
@@ -16,8 +19,14 @@ void RegisterPlugins(flutter::PluginRegistry* registry) {
       registry->GetRegistrarForPlugin("BitsdojoWindowPlugin"));
   FlutterAcrylicPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("FlutterAcrylicPlugin"));
+  MediaKitLibsWindowsVideoPluginCApiRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("MediaKitLibsWindowsVideoPluginCApi"));
+  MediaKitVideoPluginCApiRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("MediaKitVideoPluginCApi"));
   ScreenRetrieverWindowsPluginCApiRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("ScreenRetrieverWindowsPluginCApi"));
+  VolumeControllerPluginCApiRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("VolumeControllerPluginCApi"));
   WindowManagerPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("WindowManagerPlugin"));
 }

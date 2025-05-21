@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:playtech_transmitter_app/color_custom.dart';
+import 'package:playtech_transmitter_app/service/color_custom.dart';
 import 'package:playtech_transmitter_app/odometer_style3/odometer_child3.dart';
 import 'package:web_socket_channel/io.dart';
 
@@ -44,14 +44,7 @@ class JackpotDisplayV2State extends State<JackpotDisplayV2> {
       channel = IOWebSocketChannel.connect('ws://$serverIp:$serverPort');
       channel.stream.listen(
         (message) {
-          print(message);
           final data = jsonDecode(message);
-          if(data==null){
-          }else{
-            if(data['Id']=='0'){
-              debugPrint('data: ${data}');
-            }
-          }
           final level = data['Id'].toString();
           final newValue = double.tryParse(data['Value'].toString()) ?? 0.0;
           setState(() {
@@ -104,7 +97,9 @@ class JackpotDisplayV2State extends State<JackpotDisplayV2> {
         child: isConnected
             ?
             GameOdometerChildStyle3(startValue: previousJackpotValueLevelFrequent, endValue:jackpotValueLevelFrequent ,nameJP:"Frequent")
-            :  const Text("Connecting ...",style: TextStyle(fontSize: 12.0,color: Colors.white,),),
+            :
+            const Text("connecting ...",style: TextStyle(fontSize: 8.0,color: Colors.white,),),
+
       ),
     );
   }

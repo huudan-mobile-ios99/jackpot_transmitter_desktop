@@ -29,21 +29,21 @@ class _GameOdometerChildStyle3State extends State<GameOdometerChildStyle3>
   late AnimationController animationController;
   late Animation<OdometerNumber> odometerAnimation;
   late double currentValue;
-  final double fontSize = 75;
-  final String fontFamily = 'imprint';
+  final double fontSize = 100;
+  final String fontFamily = 'sf-pro-display';
   late int durationPerStep; // Calculated dynamically
   late int integerDigits=0; // Cache integer digits
 
   final textStyle = const TextStyle(
-    fontSize: 75,
+    fontSize: 100,
     color: Colors.white,
-    fontFamily: 'imprint',
+    fontFamily: 'sf-pro-display',
     fontWeight: FontWeight.normal,
     shadows: [
       Shadow(
         color: Colors.orangeAccent,
-        offset: Offset(0, 2),
-        blurRadius: 4,
+        offset: Offset(0, 3.5),
+        blurRadius: 4.5,
       ),
     ],
   );
@@ -148,45 +148,38 @@ class _GameOdometerChildStyle3State extends State<GameOdometerChildStyle3>
 
   @override
   Widget build(BuildContext context) {
-    final letterWidth = fontSize * 0.575;
-    final verticalOffset = fontSize * 1.35;
+    final double letterWidth = fontSize * 0.615;
+    final double verticalOffset = fontSize * 1.1;
+    final double width = MediaQuery.of(context).size.width;
 
-    return Column(
-      children: [
-        ClipRect(
-          child: Container(
-            alignment: Alignment.center,
-            width: 500,
-            height: 135,
-            decoration: BoxDecoration(
-              // color:Colors.white12,
-              borderRadius: BorderRadius.circular(28.0)
+    return ClipRect(
+      child: Container(
+        alignment: Alignment.center,
+        width: width/2,
+        height: 107.5,
+        // decoration: BoxDecoration(
+        //   // color:Colors.white12,
+        //   borderRadius: BorderRadius.circular(8.0)
+        // ),
+        child: Stack(
+          children: [
+            Positioned(
+              top:-19.25,
+              left:0,right:0,
+              child: SlideOdometerTransition(
+                verticalOffset: verticalOffset,
+                groupSeparator: Text(',',style:textStyle),
+                decimalSeparator: Text('.',style:textStyle),
+                letterWidth: letterWidth,
+                odometerAnimation: odometerAnimation,
+                numberTextStyle: textStyle,
+                decimalPlaces: 2,
+                integerDigits:integerDigits
+              ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('\$', style: textStyle),
-                const SizedBox(width: 8),
-                RepaintBoundary(
-                  child: SlideOdometerTransition(
-                    verticalOffset: verticalOffset,
-                    groupSeparator: Text(',',style:textStyle),
-                    decimalSeparator: Text('.',style:textStyle),
-                    letterWidth: letterWidth,
-                    odometerAnimation: odometerAnimation,
-                    numberTextStyle: textStyle,
-                    decimalPlaces: 2,
-                    integerDigits:integerDigits
-                  ),
-                ),
-              ],
-            ),
-          ),
+          ],
         ),
-        // Text('${widget.nameJP}: ${widget.startValue}->${widget.endValue}',style:TextStyle(color:Colors.white))
-      ],
+      ),
     );
   }
 }

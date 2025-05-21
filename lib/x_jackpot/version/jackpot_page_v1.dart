@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:playtech_transmitter_app/color_custom.dart';
+import 'package:playtech_transmitter_app/service/color_custom.dart';
 import 'package:playtech_transmitter_app/widget/jackpot_body.dart';
 import 'package:playtech_transmitter_app/odometer/odometer_child_custom.dart';
 import 'package:playtech_transmitter_app/odometer_style2/odometer_child2.dart';
@@ -12,9 +12,10 @@ import 'package:web_socket_channel/io.dart';
 //weekly:3
 //triple:35
 //dozen : 2
-//daily golden:18
-//Frequent: 0
 
+//daily golden:34
+//daily:1
+//Frequent: 0
 //screen resolution:1872x2600
 
 class JackpotDisplayV1 extends StatefulWidget {
@@ -35,25 +36,33 @@ class JackpotDisplayV1State extends State<JackpotDisplayV1> {
   final int animationSpeed = 2000; // Match HTML animation speed (2000ms)
 
 
-
+  //vegas
   double jackpotValueLevelVegas = 0.0;
   double previousJackpotValueLevelVegas = 0.0;
-
+  //monthly
   double jackpotValueLevelZMonthly = 0.0;
   double previousJackpotValueLevelZMonthly = 0.0;
 
+  //weekly
   double jackpotValueLevelWeekly = 0.0;
   double previousJackpotValueLevelWeeekly = 0.0;
-
+  //triple
   double jackpotValueLevelTripple = 0.0;
   double previousJackpotValueLevelTripple= 0.0;
 
+  //dozen
   double jackpotValueLevelDozen = 0.0;
   double previousJackpotValueLevelDozen= 0.0;
 
+  //daily golden
   double jackpotValueLevelDailyGolden = 0.0;
   double previousJackpotValueLevelDailyGolden= 0.0;
 
+  //daily
+  double jackpotValueLevelDaily = 0.0;
+  double previousJackpotValueLevelDaily= 0.0;
+
+  //frequent
   double jackpotValueLevelFrequent = 0.0;
   double previousJackpotValueLevelFrequent = 0.0;
 
@@ -77,45 +86,43 @@ class JackpotDisplayV1State extends State<JackpotDisplayV1> {
         (message) {
           // Parse WebSocket message
           final data = jsonDecode(message);
-          if(data==null){
-            debugPrint('JP DROPPED');
-          }else{
-            if(data['Id']=='0'){
-              debugPrint('data: ${data}');
-            }
-          }
-          // debugPrint("Data JP: $data");
-          // debugPrint("data message: $message");
           final level = data['Id'].toString();
           final newValue = double.tryParse(data['Value'].toString()) ?? 0.0;
           setState(() {
-            if (level == "4") {
-              previousJackpotValueLevelVegas = jackpotValueLevelVegas; // Save current as previous
-              jackpotValueLevelVegas = newValue; // Update to new value
-            } else if (level == "46") {
-              previousJackpotValueLevelZMonthly = jackpotValueLevelZMonthly; // Save current as previous
-              jackpotValueLevelZMonthly = newValue; // Update to new value
+            if (level == "0") {
+              previousJackpotValueLevelFrequent = jackpotValueLevelFrequent; // Save current as previous
+              jackpotValueLevelFrequent = newValue; // Update to new value
+            }
+            else if (level == "1") {
+              previousJackpotValueLevelDaily = jackpotValueLevelDaily; // Save current as previous
+              jackpotValueLevelDaily = newValue; // Update to new value
+            }
+
+            else if (level == "2") {
+              previousJackpotValueLevelDozen = jackpotValueLevelDozen; // Save current as previous
+              jackpotValueLevelDozen = newValue; // Update to new value
             }
             else if (level == "3") {
               previousJackpotValueLevelWeeekly = jackpotValueLevelWeekly; // Save current as previous
               jackpotValueLevelWeekly = newValue; // Update to new value
             }
-            else if (level == "35") {
-              previousJackpotValueLevelTripple = jackpotValueLevelTripple; // Save current as previous
-              jackpotValueLevelTripple = newValue; // Update to new value
-            }
-            else if (level == "2") {
-              previousJackpotValueLevelDozen = jackpotValueLevelDozen; // Save current as previous
-              jackpotValueLevelDozen = newValue; // Update to new value
-            }
             else if (level == "34") {
               previousJackpotValueLevelDailyGolden = jackpotValueLevelDailyGolden; // Save current as previous
               jackpotValueLevelDailyGolden = newValue; // Update to new value
             }
-            else if (level == "0") {
-              previousJackpotValueLevelFrequent = jackpotValueLevelFrequent; // Save current as previous
-              jackpotValueLevelFrequent = newValue; // Update to new value
+            else if (level == "35") {
+              previousJackpotValueLevelTripple = jackpotValueLevelTripple; // Save current as previous
+              jackpotValueLevelTripple = newValue; // Update to new value
             }
+            else if (level == "46") {
+              previousJackpotValueLevelZMonthly = jackpotValueLevelZMonthly; // Save current as previous
+              jackpotValueLevelZMonthly = newValue; // Update to new value
+            }
+            else if (level == "4") {
+              previousJackpotValueLevelVegas = jackpotValueLevelVegas; // Save current as previous
+              jackpotValueLevelVegas = newValue; // Update to new value
+            }
+
             isConnected = true;
           });
         },
@@ -133,7 +140,7 @@ class JackpotDisplayV1State extends State<JackpotDisplayV1> {
             isConnected = false;
           });
           // Attempt to reconnect after 5 seconds
-          Future.delayed( Duration(seconds: secondToReconnect), connectToWebSocket);
+          Future.delayed(Duration(seconds: secondToReconnect), connectToWebSocket);
         },
       );
     } catch (e) {
@@ -142,7 +149,7 @@ class JackpotDisplayV1State extends State<JackpotDisplayV1> {
         isConnected = false;
       });
       // Attempt to reconnect after 5 seconds
-      Future.delayed( Duration(seconds: secondToReconnect), connectToWebSocket);
+      Future.delayed(Duration(seconds: secondToReconnect), connectToWebSocket);
     }
   }
 
@@ -201,13 +208,7 @@ class JackpotDisplayV1State extends State<JackpotDisplayV1> {
             //     )
             //   ],
             // )
-            :  const Text(
-                "Connecting ...",
-                style: TextStyle(
-                  fontSize: 12.0,
-                  color: Colors.white,
-                ),
-              ),
+            :  const Text("connecting ...",style: TextStyle(fontSize: 8.0,color: Colors.white,),),
       ),
     );
   }

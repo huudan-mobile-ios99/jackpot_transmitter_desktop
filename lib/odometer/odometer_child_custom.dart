@@ -155,7 +155,7 @@
 
 
 import 'package:flutter/material.dart';
-import 'package:playtech_transmitter_app/color_custom.dart';
+import 'package:playtech_transmitter_app/service/color_custom.dart';
 import 'package:playtech_transmitter_app/odometer/odometer_number_custom.dart';
 import 'package:playtech_transmitter_app/odometer/slide_odometer_custom.dart';
 

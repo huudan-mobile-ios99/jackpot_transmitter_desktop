@@ -1,86 +1,60 @@
+import 'package:flutter/material.dart';
+import 'package:playtech_transmitter_app/service/config_custom.dart';
+import 'package:socket_io_client/socket_io_client.dart' as socket_io;
 import 'dart:async';
-import 'package:flutter/foundation.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
 
-class SocketManager {
-  final String BASEURL = '';
-  static final SocketManager _instance = SocketManager._();
-  factory SocketManager() {
-    return _instance;
-  }
+class SocketService {
+  socket_io.Socket? _socket;
 
-  IO.Socket? _socket;
-  late StreamController<List<Map<String, dynamic>>> _streamController;
-  IO.Socket? get socket => _socket;
+  final StreamController<Map<String, dynamic>> _dataController =  StreamController.broadcast();
+  bool _isConnected = false;
 
+  SocketService();
 
+  Stream<Map<String, dynamic>> get dataStream => _dataController.stream;
+  bool get isConnected => _isConnected;
 
-  Stream<List<Map<String, dynamic>>> get dataStream => _streamController.stream;
+  void connect() {
+    _socket = socket_io.io(
+      ConfigCustom.urlSocketJPHit,
+      socket_io.OptionBuilder()
+          .setTransports(['websocket'])
+          .enableAutoConnect()
+          .setReconnectionDelay(1000)
+          .setReconnectionAttempts(double.infinity)
+          .build(),
+    );
 
-
-  SocketManager._() {
-    _streamController =  StreamController<List<Map<String, dynamic>>>.broadcast();
-  }
-
-  void initSocket() {
-    debugPrint('initSocket');
-    _socket = IO.io(BASEURL, <String, dynamic>{
-      // 'autoConnect': false,
-      // 'transports': ['websocket'],
-      'autoConnect': true, // Auto reconnect
-      'reconnection': true, // Enable reconnections
-      'reconnectionAttempts': 100, // Number of reconnection attempts
-      'reconnectionDelay': 1500, // Delay between reconnections
-      'transports': ['websocket'],
+    _socket?.onConnect((_) {
+      _isConnected = true;
+      debugPrint('Socket connected to  ${ConfigCustom.urlSocketJPHit}');
     });
 
-    //EVENT DEVICE
-    _socket?.on('jackpotHit', (data) {
-      debugPrint('jackpotHit JSON: $data');
-      // processData(data);
+    _socket?.onDisconnect((_) {
+      _isConnected = false;
+      debugPrint('Socket disconnected');
     });
 
+    _socket?.onReconnect((_) {
+      debugPrint('Socket reconnected');
+      // Request latest data on reconnect
+      _socket?.emit('fetch_latest');
+    });
 
+    _socket?.onError((error) {
+      debugPrint('Socket error: $error');
+    });
 
-    _socket?.connect();
-  }
-
-  void connectSocket() {
-    _socket?.connect();
-  }
-
-  void disposeSocket() {
-    _socket?.disconnect();
-    _socket = null;
-  }
-
-//process data setting
-  void processData(dynamic data) {
-    debugPrint('processData');
-    for (var jsonData in data) {
-      try {
-        Map<String, dynamic> data = {
-          "remaintime": jsonData['remaintime'],
-          "remaingame": jsonData['remaingame'],
-          "minbet": jsonData['minbet'],
-          "maxbet": jsonData['maxbet'],
-          "run": jsonData['run'],
-          "lastupdate": jsonData['lastupdate'],
-          "gamenumber": jsonData['gamenumber'],
-          "roundtext": jsonData['roundtext'],
-          "gametext": jsonData['gametext'],
-          "buyin": jsonData['buyin']
-        };
-        _streamController.add([data]);
-      } catch (e) {
-        debugPrint('Error parsing data setting: $e');
+    _socket?.on('jackpot_hit', (data) {
+      if (data is Map<String, dynamic>) {
+        _dataController.add(data);
       }
-    }
+    });
   }
 
-
-  void emitJackpotHit() {
-    _socket?.emit('emitjackpotHit');
+  void disconnect() {
+    _socket?.disconnect();
+    _socket?.dispose();
+    _dataController.close();
   }
-
 }

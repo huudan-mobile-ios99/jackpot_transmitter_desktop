@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:playtech_transmitter_app/odometer_style2/odometer_number.dart';
 import 'package:playtech_transmitter_app/odometer_style2/slide_odometer.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter/material.dart';
 
 class GameOdometerChildStyle2 extends StatefulWidget {
   final double startValue;

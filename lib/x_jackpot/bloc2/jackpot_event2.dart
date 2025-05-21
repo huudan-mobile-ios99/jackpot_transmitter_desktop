@@ -1,34 +1,42 @@
 import 'package:equatable/equatable.dart';
 
-abstract class JackpotEvent2 extends Equatable {
-  const JackpotEvent2();
-  @override
-  List<Object?> get props => [];
-}
-
+ class JackpotEvent2 {}
 class JackpotHitReceived extends JackpotEvent2 {
   final Map<String, dynamic> hit;
-  const JackpotHitReceived(this.hit);
-  @override
-  List<Object?> get props => [hit];
+  JackpotHitReceived(this.hit);
 }
 
 class JackpotInitialConfigReceived extends JackpotEvent2 {
   final Map<String, dynamic> config;
-  const JackpotInitialConfigReceived(this.config);
-  @override
-  List<Object?> get props => [config];
+  JackpotInitialConfigReceived(this.config);
 }
 
 class JackpotUpdatedConfigReceived extends JackpotEvent2 {
   final Map<String, dynamic> config;
-  const JackpotUpdatedConfigReceived(this.config);
-  @override
-  List<Object?> get props => [config];
+  JackpotUpdatedConfigReceived(this.config);
 }
 
 class JackpotHideImagePage extends JackpotEvent2 {
-  const JackpotHideImagePage();
-  @override
-  List<Object?> get props => [];
+   JackpotHideImagePage();
+}
+
+class JackpotConnect extends JackpotEvent2 {}
+
+class JackpotDisconnect extends JackpotEvent2 {}
+
+class JackpotReconnect extends JackpotEvent2 {}
+
+class JackpotError extends JackpotEvent2 {
+  final String error;
+  JackpotError(this.error);
+}
+
+class JackpotReconnectAttempt extends JackpotEvent2 {
+  final int attempt;
+  JackpotReconnectAttempt(this.attempt);
+}
+
+class JackpotReconnectError extends JackpotEvent2 {
+  final String error;
+  JackpotReconnectError(this.error);
 }

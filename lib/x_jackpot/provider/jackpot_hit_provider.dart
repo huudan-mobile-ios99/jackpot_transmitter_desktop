@@ -17,7 +17,6 @@ class JackpotProvider with ChangeNotifier {
 
   JackpotProvider() {
     connectWebSocket();
-    fetchInitialHits();
   }
 
   void connectWebSocket() async {
@@ -32,14 +31,14 @@ class JackpotProvider with ChangeNotifier {
         (message) {
           try {
             final data = jsonDecode(message);
-            print(data);
+            debugPrint(data);
             if (data['type'] == 'JackpotHit' || data['type'] == 'HotSeatHit') {
               final hit = JackpotHit.fromJson(data);
               _hits.insert(0, hit); // Add new hit at the top
               notifyListeners();
             }
           } catch (e) {
-            print('Error parsing WebSocket message: $e');
+            debugPrint('Error parsing WebSocket message: $e');
           }
         },
         onError: (error) {
@@ -72,22 +71,7 @@ class JackpotProvider with ChangeNotifier {
     });
   }
 
-  Future<void> fetchInitialHits() async {
-    // const apiUrl = 'http://localhost:3002/api/hits'; // Adjust to your server IP
-    // try {
-    //   final response = await http.get(Uri.parse(apiUrl));
-    //   if (response.statusCode == 200) {
-    //     final List<dynamic> data = jsonDecode(response.body);
-    //     _hits = data.map((json) => JackpotHit.fromJson(json)).toList();
-    //     _hits.sort((a, b) => b.timestamp.compareTo(a.timestamp)); // Newest first
-    //     notifyListeners();
-    //   } else {
-    //     debugPrint('Failed to fetch initial hits: ${response.statusCode}');
-    //   }
-    // } catch (e) {
-    //   debugPrint('Error fetching initial hits: $e');
-    // }
-  }
+
 
   @override
   void dispose() {

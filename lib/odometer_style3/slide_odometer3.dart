@@ -277,31 +277,35 @@ class SlideOdometerTransition extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return OdometerTransition(
-      odometerAnimation: odometerAnimation,
-      transitionIn: (value, place, animation) => _buildSlideOdometerDigit(
-        value,
-        place,
-        animation < 0.02 ? 0.85 + (animation / 0.02) * (1.0 - 0.85) : 1.0,
-        verticalOffset * (1.0 - animation),
-        groupSeparator,
-        decimalSeparator,
-        numberTextStyle,
-        letterWidth,
-        decimalPlaces,
-        integerDigits, // Pass cached integer digits
-      ),
-      transitionOut: (value, place, animation) => _buildSlideOdometerDigit(
-        value,
-        place,
-        animation <= 0.99 ? 1.0 : 1 - ((animation - 0.99) / 0.1).clamp(0.0, 1.0),
-        verticalOffset * (animation * -1),
-        groupSeparator,
-        decimalSeparator,
-        numberTextStyle,
-        letterWidth,
-        decimalPlaces,
-        integerDigits, // Pass cached integer digits
+    return SizedBox(
+      child: Center(
+        child: OdometerTransition(
+          odometerAnimation: odometerAnimation,
+          transitionIn: (value, place, animation) => _buildSlideOdometerDigit(
+            value,
+            place,
+            animation < 0.02 ? 0.85 + (animation / 0.02) * (1.0 - 0.85) : 1.0,
+            verticalOffset * (1.0 - animation),
+            groupSeparator,
+            decimalSeparator,
+            numberTextStyle,
+            letterWidth,
+            decimalPlaces,
+            integerDigits, // Pass cached integer digits
+          ),
+          transitionOut: (value, place, animation) => _buildSlideOdometerDigit(
+            value,
+            place,
+            animation <= 0.99 ? 1.0 : 1 - ((animation - 0.99) / 0.1).clamp(0.0, 1.0),
+            verticalOffset * (animation * -1),
+            groupSeparator,
+            decimalSeparator,
+            numberTextStyle,
+            letterWidth,
+            decimalPlaces,
+            integerDigits, // Pass cached integer digits
+          ),
+        ),
       ),
     );
   }
@@ -324,7 +328,7 @@ Widget _buildSlideOdometerDigit(
   // Place decimal separator after integer digits
   if (decimalSeparator != null && place == integerDigits + decimalPlaces) {
     return Row(
-      mainAxisSize: MainAxisSize.max,
+      mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -340,7 +344,7 @@ Widget _buildSlideOdometerDigit(
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisSize: MainAxisSize.max,
+      mainAxisSize: MainAxisSize.min,
       children: [
         digitWidget,
         groupSeparator,
