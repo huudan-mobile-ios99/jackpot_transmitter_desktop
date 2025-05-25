@@ -158,7 +158,7 @@ class _JackpotBackgroundShowWindowFadeAnimateV1State extends State<JackpotBackgr
                   ),)
               : circularProgessCustom(),
             ),
-            const JackpotDisplay(),
+             JackpotDisplay(),
           ],
         );
       },

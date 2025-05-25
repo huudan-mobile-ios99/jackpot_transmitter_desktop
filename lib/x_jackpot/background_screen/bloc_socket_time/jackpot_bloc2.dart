@@ -25,7 +25,7 @@ class JackpotBloc2 extends Bloc<JackpotEvent2, JackpotState2> {
     });
 
     socket.onConnect((_) {
-      debugPrint('Connected to Socket.IO server: ${ConfigCustom.urlSocketJPHit}');
+      debugPrint('Connected to Socket.IO server:');
       add(JackpotConnect());
     });
 

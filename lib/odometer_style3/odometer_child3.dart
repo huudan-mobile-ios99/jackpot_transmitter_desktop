@@ -4,6 +4,8 @@ import 'package:playtech_transmitter_app/odometer_style3/odometer_number3.dart';
 import 'package:playtech_transmitter_app/odometer_style3/slide_odometer3.dart';
 import 'dart:async';
 
+import 'package:playtech_transmitter_app/widget/text_widget.dart';
+
 
 
 class GameOdometerChildStyle3 extends StatefulWidget {
@@ -29,24 +31,12 @@ class _GameOdometerChildStyle3State extends State<GameOdometerChildStyle3>
   late AnimationController animationController;
   late Animation<OdometerNumber> odometerAnimation;
   late double currentValue;
-  final double fontSize = 100;
+  final double fontSize = 82.5;
   final String fontFamily = 'sf-pro-display';
   late int durationPerStep; // Calculated dynamically
   late int integerDigits=0; // Cache integer digits
 
-  final textStyle = const TextStyle(
-    fontSize: 100,
-    color: Colors.white,
-    fontFamily: 'sf-pro-display',
-    fontWeight: FontWeight.normal,
-    shadows: [
-      Shadow(
-        color: Colors.orangeAccent,
-        offset: Offset(0, 3.5),
-        blurRadius: 4.5,
-      ),
-    ],
-  );
+
 
   Timer? _animationTimer;
 
@@ -164,15 +154,15 @@ class _GameOdometerChildStyle3State extends State<GameOdometerChildStyle3>
         child: Stack(
           children: [
             Positioned(
-              top:-19.25,
+              top:-10,
               left:0,right:0,
               child: SlideOdometerTransition(
                 verticalOffset: verticalOffset,
-                groupSeparator: Text(',',style:textStyle),
-                decimalSeparator: Text('.',style:textStyle),
+                groupSeparator:  Text(',',style:textStyleOdo),
+                decimalSeparator:  Text('.',style:textStyleOdo),
                 letterWidth: letterWidth,
                 odometerAnimation: odometerAnimation,
-                numberTextStyle: textStyle,
+                numberTextStyle: textStyleOdo,
                 decimalPlaces: 2,
                 integerDigits:integerDigits
               ),

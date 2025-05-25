@@ -103,7 +103,7 @@ class _JackpotBackgroundShowState extends State< JackpotBackgroundShow>
                   ),
                 ),
                 // Uncomment if JackpotDisplay is needed
-                const JackpotDisplay(),
+                 JackpotDisplay(),
                 // Text('${state.currentVideo} ${state.id}',style:TextStyle(color:Colors.white))
               ],
             ),

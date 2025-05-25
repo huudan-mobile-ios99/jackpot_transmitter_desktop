@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:playtech_transmitter_app/service/config_custom.dart';
 import 'package:playtech_transmitter_app/widget/circlar_progress_custom.dart';
-import 'package:playtech_transmitter_app/x_jackpot/background_screen/jackpot_backgroundvideo_hit_window.dart';
 import 'package:playtech_transmitter_app/x_jackpot/background_screen/jackpot_backgroundvideo_hit_window_fade_animation.dart';
-import 'package:playtech_transmitter_app/x_jackpot/bloc2/jackpot_bloc2.dart';
-import 'package:playtech_transmitter_app/x_jackpot/bloc2/jackpot_state2.dart';
-import 'package:playtech_transmitter_app/x_jackpot/background_screen/jackpot_backgroundvideo_hit.dart';
+import 'package:playtech_transmitter_app/x_jackpot/background_screen/bloc_socket_time/jackpot_bloc2.dart';
+import 'package:playtech_transmitter_app/x_jackpot/background_screen/bloc_socket_time/jackpot_state2.dart';
 
 class JackpotHitScreen extends StatelessWidget {
   const JackpotHitScreen({super.key});
@@ -16,48 +13,41 @@ class JackpotHitScreen extends StatelessWidget {
     return
     // JackpotBackgroundVideoHitWindowFadeAnimation(number: '1111', value: '33333', id: '2');
 
-    //  BlocBuilder<JackpotBloc2, JackpotState2>(builder: (context, state) {
-    //  return Container(
-              // alignment: Alignment.center,
-              // width: ConfigCustom.fixWidth/2,
-              // height: ConfigCustom.fixHeight/2,
-              // color:Colors.white38,
-              // child:  Center(child: Text("${state.latestHit} - ${state.hits} -${state.showImagePage}",style:TextStyle(color:Colors.black,fontSize: 50))));});
 
-    BlocBuilder<JackpotBloc2, JackpotState2>(
-        builder: (context, state) {
-          // Show error only if not connected and no hits
-          if (!state.isConnected && state.hits.isEmpty && state.error != null) {
-            return Center(child: Text('Error: ${state.error}'));
+   BlocSelector<JackpotBloc2, JackpotState2, Map<String, dynamic>?>(
+      selector: (state) {
+        // Select hit data only when showImagePage is true and latestHit exists
+        if (state.showImagePage && state.latestHit != null) {
+          return state.latestHit;
+        }
+        // Return null for loading, error, or empty states
+        if (!state.isConnected && state.hits.isEmpty) {
+          return {'isLoading': true, 'error': state.error};
+        }
+        return null;
+      },
+      builder: (context, hitData) {
+        debugPrint('JackpotHitScreen BlocSelector: hitData=$hitData');
+        // Loading state
+        if (hitData != null && hitData.containsKey('isLoading')) {
+          if (hitData['error'] != null) {
+            return Center(child: Text('Error: ${hitData['error']}', style: const TextStyle(color: Colors.white)));
           }
-          // Show loading if not connected and no hits
-          if (!state.isConnected && state.hits.isEmpty) {
-            return circularProgessCustom();
-          }
+          return circularProgessCustom();
+        }
+        // Empty state
+        if (hitData == null) {
+          return const Center(child: Text('', style: TextStyle(color: Colors.white)));
+        }
+        // Hit state
+        return JackpotBackgroundVideoHitWindowFadeAnimation(
+          id: hitData['id'].toString(),
+          number: hitData['machineNumber'].toString(),
+          value: hitData['amount'] == [] ? "0" : hitData['amount'].toString(),
+        );
+      },
+    );
 
-          // Show empty state if no hits
-          if (state.hits.isEmpty) {
-            return const Center(child: Text('',style:TextStyle(color:Colors.white)));
-          }
-
-          // Show JackpotImagePage for 10 seconds on new hit
-          if (state.showImagePage && state.latestHit != null) {
-            debugPrint('state.latestHit ${state.latestHit} - state.showImagePage: ${state.showImagePage}');
-            return Stack(
-              children: [
-                JackpotBackgroundVideoHitWindowFadeAnimation(
-                  id : state.latestHit!['id'].toString(),
-                  number: state.latestHit!['machineNumber'].toString(),
-                  value:state.latestHit!['amount'] ==[]? "0": state.latestHit!['amount'].toString(),
-                ),
-                Center(child: Text("${state.latestHit} - ${state.hits} -${state.showImagePage}",style:TextStyle(color:Colors.white)))
-              ],
-            );
-          }
-
-          return const Center(child: Text("",style:TextStyle(color:Colors.white)));
-        },
-      );
   }
 }
 

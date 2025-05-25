@@ -4,12 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:playtech_transmitter_app/service/config_custom.dart';
+import 'package:playtech_transmitter_app/setting/bloc/setting_bloc.dart';
+import 'package:playtech_transmitter_app/setting/bloc/setting_event.dart';
+import 'package:playtech_transmitter_app/setting/setting_service.dart';
+import 'package:playtech_transmitter_app/widget/circlar_progress_custom.dart';
 import 'package:playtech_transmitter_app/x_jackpot/background_screen/bloc/video_bloc.dart';
-import 'package:playtech_transmitter_app/x_jackpot/background_screen/jackpot_background_show.dart';
-import 'package:playtech_transmitter_app/x_jackpot/background_screen/jackpot_background_show_window.dart';
+import 'package:playtech_transmitter_app/x_jackpot/background_screen/bloc_jp_price/jackpot_price_bloc.dart';
+import 'package:playtech_transmitter_app/x_jackpot/background_screen/no-use-version/jackpot_background_show.dart';
+import 'package:playtech_transmitter_app/x_jackpot/background_screen/no-use-version/jackpot_background_show_window.dart';
 import 'package:playtech_transmitter_app/x_jackpot/background_screen/jackpot_background_show_window_fade_animation.dart';
 import 'package:playtech_transmitter_app/x_jackpot/background_screen/jackpot_screen.dart';
-import 'package:playtech_transmitter_app/x_jackpot/bloc2/jackpot_bloc2.dart';
+import 'package:playtech_transmitter_app/x_jackpot/background_screen/bloc_socket_time/jackpot_bloc2.dart';
 import 'package:media_kit/media_kit.dart';                      // Provides [Player], [Media], [Playlist] etc.
 import 'package:media_kit_video/media_kit_video.dart';
 
@@ -18,23 +23,15 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MediaKit.ensureInitialized();
   await Window.initialize();
-  // await Window.setWindowBackgroundColorToClear();
   await Window.makeTitlebarTransparent();
-  // await Window.addEmptyMaskImage();
-  // await Window.disableShadow();
   await Window.hideWindowControls();
-  // await Window.hideTitle();
+  // await Window.enterFullscreen();
   runApp(const MyApp());
+  
   doWhenWindowReady(() {
       appWindow
-        // ..minSize =const Size(1920, 1080)
-        // ..size =const Size(1920, 1080)
         ..size =const Size(ConfigCustom.fixWidth, ConfigCustom.fixHeight)
-        // ..minSize =const Size(1536, 864)
-        // ..minSize =const Size(960, 540)
-        // ..size =const Size(960, 540)
-        // ..minSize =const Size(1920, 1080)
-        // ..size =const Size(1920, 1080)
+         ..minSize =const Size(ConfigCustom.fixWidth, ConfigCustom.fixHeight)
         ..alignment = Alignment.center
         ..startDragging()
         ..show();
@@ -80,18 +77,36 @@ class MyAppBodyState extends State<MyAppBody> {
   Widget build(BuildContext context) {
     return  MultiBlocProvider(
       providers: [
-        BlocProvider( create: (context) => JackpotBloc2(),),
-        BlocProvider(  create: (context) => VideoBloc(videoBg1: ConfigCustom.videoBg, videoBg2: ConfigCustom.videoBg2),
+        BlocProvider(create: (context) => JackpotBloc2(),),
+        BlocProvider(create: (context) => SettingsBloc()..add(LoadSettingsEvent()),),
+        BlocProvider(create: (context) => JackpotPriceBloc(),),
+        BlocProvider(create: (context) => VideoBloc(videoBg1: ConfigCustom.videoBg, videoBg2: ConfigCustom.videoBg2),
       ),
       ],
-      child: const Scaffold(
-        body:
-         Stack(
-          children: [
-             JackpotBackgroundShowWindowFadeAnimate(), //show first (contain background and number jp prices)
-             JackpotHitScreen(), //show second (contain video background of types of jp prices based on its id)
-          ],
-        )
+      child: FutureBuilder(
+        future: SettingsService().init(context),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+          return Scaffold(
+            body: Center(child: circularProgessCustom()),
+          );
+        }
+        final settingsService = SettingsService();
+        if (settingsService.error != null) {
+          return Scaffold(
+            body: Center(child: Text(settingsService.error!)),
+          );
+        }
+        return
+        const Scaffold(
+          body:
+           Stack(
+            children: [
+               RepaintBoundary(child: JackpotBackgroundShowWindowFadeAnimate()), //show first (contain background and number jp prices)
+               RepaintBoundary(child: JackpotHitScreen()), //show second (contain video background of types of jp prices based on its id)
+            ],
+          )
+        );}
       ),
     );
   }

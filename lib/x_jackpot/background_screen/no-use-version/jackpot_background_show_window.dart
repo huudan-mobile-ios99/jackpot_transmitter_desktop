@@ -122,7 +122,7 @@ class _JackpotBackgroundShowWindowState extends State<JackpotBackgroundShowWindo
                   ],
                 ),
               ),
-              const JackpotDisplay(),
+               JackpotDisplay(),
               Text(
                 '${state.currentVideo} ${state.id}',
                 style: const TextStyle(color: Colors.white),

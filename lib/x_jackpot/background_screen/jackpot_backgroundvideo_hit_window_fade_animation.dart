@@ -3,6 +3,9 @@ import 'package:intl/intl.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:playtech_transmitter_app/service/config_custom.dart';
+import 'package:playtech_transmitter_app/setting/bloc/setting_bloc.dart';
+import 'package:playtech_transmitter_app/setting/setting_service.dart';
+import 'package:playtech_transmitter_app/widget/text_widget.dart';
 
 class JackpotBackgroundVideoHitWindowFadeAnimation extends StatefulWidget {
   final String number;
@@ -23,46 +26,51 @@ class JackpotBackgroundVideoHitWindowFadeAnimation extends StatefulWidget {
 class _JackpotBackgroundVideoHitWindowFadeAnimationState extends State<JackpotBackgroundVideoHitWindowFadeAnimation>
     with SingleTickerProviderStateMixin {
   late final Player _player;
+
   late final VideoController _controller;
   final NumberFormat _numberFormat = NumberFormat('#,##0.00', 'en_US');
   String? _currentVideoPath;
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
-  final double fontSize = 145;
+  final settingsService = SettingsService();
+
 
   String getVideoAssetPath(String id) {
     debugPrint('getVideoAssetPath: id=$id');
     switch (id) {
       case '0':
-        return 'asset/video/frequent.mpg';
+        return settingsService.settings!.jpIdFrequentVideoPath;
       case '1':
-        return 'asset/video/daily.mpg';
+          return settingsService.settings!.jpIdDailyVideoPath;
       case '2':
-        return 'asset/video/dozen.mpg';
+       return settingsService.settings!.jpIdDozenVideoPath;
+
       case '3':
-        return 'asset/video/weekly.mpg';
+        return settingsService.settings!.jpIdWeeklyVideoPath;
+
       case '4':
-        return 'asset/video/vegas.mpg';
+         return settingsService.settings!.jpIdVegasVideoPath;
       case '34':
-        return 'asset/video/daily_golden.mpg';
+         return settingsService.settings!.jpIdDailygoldenVideoPath;
       case '35':
-        return 'asset/video/tripple.mpg';
+         return settingsService.settings!.jpIdTrippleVideoPath;
+
       case '45':
-        return 'asset/video/high_limit.mpg';
+         return settingsService.settings!.jpIdHighlimitVideoPath;
       case '46':
-        return 'asset/video/vegas.mpg';
+         return settingsService.settings!.jpIdVegasVideoPath;
       case '44':
-        return 'asset/video/vegas.mpg';
+         return settingsService.settings!.jpIdVegasVideoPath;
       case '80':
       case '81':
       case '88':
       case '89':
       case '97':
       case '98':
-        return 'asset/video/ppochi.mpg';
+        return   settingsService.settings!.jpIdPpochiMonFriVideoPath;
       default:
         debugPrint('Unknown id: $id, falling back to frequent.mpg');
-        return 'asset/video/frequent.mpg';
+        return  settingsService.settings!.jpIdFrequentVideoPath;
     }
   }
 
@@ -143,62 +151,37 @@ class _JackpotBackgroundVideoHitWindowFadeAnimationState extends State<JackpotBa
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    final textStyle = TextStyle(
-      fontSize: fontSize,
-      color: Colors.white,
-      fontFamily: 'sf-pro-display',
-      fontWeight: FontWeight.normal,
-      shadows: const [
-        Shadow(
-          color: Colors.orangeAccent,
-          offset: Offset(0, 2),
-          blurRadius: 4,
-        ),
-      ],
-    );
-    const textStyleSmall = TextStyle(
-      fontSize: 55,
-      color: Colors.white,
-      fontFamily: 'sf-pro-display',
-      fontWeight: FontWeight.normal,
-      shadows: [
-        Shadow(
-          color: Colors.orangeAccent,
-          offset: Offset(0, 2),
-          blurRadius: 4,
-        ),
-      ],
-    );
-
     return Stack(
       fit: StackFit.expand,
       children: [
         FadeTransition(
           opacity: _fadeAnimation,
           child: Video(
-            fill: Colors.black,
+            fill: Colors.transparent,
             controls: (state) => Container(),
             controller: _controller,
             filterQuality: FilterQuality.none,
             fit: BoxFit.contain,
+            width: screenSize.width,
+            height: screenSize.height,
           ),
         ),
         Positioned(
           left: 0,
           right: 0,
-          top: screenSize.height / 2 - fontSize,
+          top: screenSize.height/2  - settingsService.settings!.textHitPriceSize*0.935,
           child: Container(
             alignment: Alignment.center,
             child: Text(
-              '\$${_numberFormat.format(num.parse(widget.value))}',
-              style: textStyle,
+             (widget.value =='0.00' || widget.value=='0.0')? "" : '\$${_numberFormat.format(num.parse(widget.value))}',
+              style: textStyleJPHit,
               textAlign: TextAlign.center,
             ),
           ),
         ),
         Positioned(
-          bottom: 26,
-          right: 86,
+          bottom: settingsService.settings!.textHitNumberDY,
+          right: settingsService.settings!.textHitNumberDX,
           child: Text(
             '#${widget.number}',
             style: textStyleSmall,

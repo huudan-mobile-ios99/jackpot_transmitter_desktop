@@ -6,6 +6,8 @@ import 'package:playtech_transmitter_app/service/config_custom.dart';
 import 'package:playtech_transmitter_app/widget/circlar_progress_custom.dart';
 import 'package:playtech_transmitter_app/x_jackpot/background_screen/bloc/video_bloc.dart';
 import 'package:playtech_transmitter_app/x_jackpot/background_screen/jackpot_page.dart';
+import 'package:playtech_transmitter_app/x_jackpot/background_screen/bloc_socket_time/jackpot_bloc2.dart';
+import 'package:playtech_transmitter_app/x_jackpot/background_screen/bloc_socket_time/jackpot_event2.dart';
 
 class JackpotBackgroundShowWindowFadeAnimate extends StatefulWidget {
   const JackpotBackgroundShowWindowFadeAnimate({super.key});
@@ -22,7 +24,7 @@ class _JackpotBackgroundShowWindowFadeAnimateState extends State<JackpotBackgrou
   bool _isInitialized = false;
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
-  Size? _lastScreenSize; // Cache screen size to reduce rebuilds
+  Size? _lastScreenSize;
 
   @override
   void initState() {
@@ -48,42 +50,76 @@ class _JackpotBackgroundShowWindowFadeAnimateState extends State<JackpotBackgrou
       ),
     );
 
-    // Load initial video
+    // Load initial video after frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadVideo(ConfigCustom.videoBg);
+    });
+
+    // Listen to player state to handle initialization
+    _player.stream.error.listen((error) {
+      debugPrint('Player error: $error');
+      if (mounted) {
+        setState(() {
+          _isInitialized = false;
+          _currentVideoPath = null;
+        });
+        // Retry loading after a delay
+        Future.delayed(const Duration(seconds: 1), () {
+          if (mounted) {
+            _loadVideo(ConfigCustom.videoBg);
+          }
+        });
+      }
+    });
+
+    _player.stream.playing.listen((playing) {
+      debugPrint('Player playing state: $playing');
+      if (!playing && mounted && context.read<JackpotBloc2>().state is! JackpotHitReceived) {
+        _player.play(); // Ensure video keeps playing unless jackpot hit
+      }
+    });
+
+    _player.stream.width.listen((width) {
+      if (width != null && width > 0 && mounted) {
+        setState(() {
+          _isInitialized = true; // Set initialized when width is available
+        });
+      }
     });
   }
 
   Future<void> _loadVideo(String videoPath) async {
     if (_currentVideoPath == videoPath) {
-      debugPrint('Video unchanged: $videoPath, skipping load');
+      debugPrint('Video already loaded: $videoPath');
+      await _player.play(); // Ensure playback resumes
       return;
     }
 
-    debugPrint('Loading video: $videoPath');
     try {
-      // Pause and reset fade before loading
-      await _player.pause();
+      debugPrint('Loading video: $videoPath');
       _fadeController.reset();
+      await _player.pause();
       _currentVideoPath = videoPath;
-      await _player.open(Media('asset:///$videoPath'), play: false);
-      debugPrint('Setting playlist mode and volume');
+      await _player.open(Media('asset://$videoPath'), play: false);
       await _player.setPlaylistMode(PlaylistMode.loop);
-      await _player.setVolume(0.0); // Muted as per original
-      debugPrint('Playing video');
+      await _player.setVolume(0.0); // Muted
       await _player.play();
-
       if (mounted) {
-        _isInitialized = true;
-        // Trigger fade-in
-        await _fadeController.forward();
-        debugPrint('Fade-in complete');
+        _fadeController.forward();
       }
-    } catch (error) {
-      debugPrint('Error loading video: $error');
+    } catch (error, stackTrace) {
+      debugPrint('Error loading video: $error\n$stackTrace');
       if (mounted) {
-        _isInitialized = false;
-        _currentVideoPath = null; // Allow retry
+        setState(() {
+          _isInitialized = false;
+          _currentVideoPath = null;
+        });
+        // Retry after a delay
+        Future.delayed(const Duration(seconds: 1), () {
+          if (mounted) {
+            _loadVideo(videoPath);
+          }
+        });
       }
     }
   }
@@ -91,16 +127,27 @@ class _JackpotBackgroundShowWindowFadeAnimateState extends State<JackpotBackgrou
   @override
   void dispose() {
     debugPrint('Disposing JackpotBackgroundShowWindowFadeAnimate');
-    _player.pause(); // Minimize texture churn
+    _player.pause();
     _player.dispose();
     _fadeController.dispose();
     super.dispose();
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final jackpotState = context.read<JackpotBloc2>().state;
+    // debugPrint('Jackpot state: $jackpotState');
+    if (jackpotState is JackpotHitReceived) {
+      _player.pause();
+    } else if (!_player.state.playing) {
+      _player.play(); // Resume playback if not paused by jackpot
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    // Skip rebuild if screen size is stable
     if (_lastScreenSize != null &&
         (_lastScreenSize!.width - screenSize.width).abs() < 1.0 &&
         (_lastScreenSize!.height - screenSize.height).abs() < 1.0) {
@@ -110,35 +157,35 @@ class _JackpotBackgroundShowWindowFadeAnimateState extends State<JackpotBackgrou
       debugPrint('Screen size updated: ${screenSize.width}x${screenSize.height}');
     }
 
-    return BlocBuilder<VideoBloc, ViddeoState>(
-      builder: (context, state) {
-        debugPrint('BlocBuilder state: id=${state.id}, video=${state.currentVideo}');
-        // Load video only if path changes
-        if (_currentVideoPath != state.currentVideo) {
-          _loadVideo(state.currentVideo);
+    return BlocSelector<VideoBloc, ViddeoState, String>(
+      selector: (state) => state.currentVideo,
+      builder: (context, currentVideo) {
+        debugPrint('BlocSelector: video=$currentVideo');
+        if (_currentVideoPath != currentVideo) {
+          _loadVideo(currentVideo);
         }
-
         return Center(
           child: AspectRatio(
-            aspectRatio: ConfigCustom.fixWidth / ConfigCustom.fixHeight, // 16/9
+            aspectRatio: ConfigCustom.fixWidth / ConfigCustom.fixHeight,
             child: Stack(
               fit: StackFit.expand,
               children: [
                 _isInitialized
-                    ? FadeTransition(
-                        opacity: _fadeAnimation,
-                        child: Video(
-                          fill: Colors.black,
-                          controls: (state) => Container(),
-                          controller: _controller,
-                          filterQuality: FilterQuality.none,
-                          fit: BoxFit.contain,
-                          width: screenSize.width,
-                          height: screenSize.width * ConfigCustom.fixHeight / ConfigCustom.fixWidth,
+                    ? RepaintBoundary(
+                        child: FadeTransition(
+                          opacity: _fadeAnimation,
+                          child: Video(
+                            fill: Colors.transparent,
+                            controls: (state) => Container(),
+                            controller: _controller,
+                            fit: BoxFit.contain,
+                            width: ConfigCustom.fixWidth, // Fixed 1920
+                            height: ConfigCustom.fixHeight, // Fixed 1080
+                          ),
                         ),
                       )
                     : circularProgessCustom(),
-                const JackpotDisplay(), // Renamed from JackpotDisplay for clarity
+                RepaintBoundary(child: JackpotDisplay()),
               ],
             ),
           ),
